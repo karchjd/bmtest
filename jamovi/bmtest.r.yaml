@@ -1,0 +1,53 @@
+---
+name: bmtest
+title: Independent Samples Brunner Munzel Test
+jrs: '1.0'
+
+items:
+    - name: bmtest
+      title: Independent Samples Brunner Munzel Test
+      description: a table containing the Brunner Munzel Test results
+      type: Table
+      rows: (vars)
+      clearWith:
+        - group
+        - hypothesis
+        - miss
+
+      columns:
+        - name: var
+          title: ""
+          content: ($key)
+          type: text
+          combineBelow: true
+
+
+        - name: stat
+          title: Statistic
+          type: number
+
+
+        - name: df
+          title: df
+          type: number
+
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+        - name: relEff
+          title: Relative Effect
+          type: number
+          visible: (relEff)
+
+        - name: cil
+          title: Lower
+          type: number
+          visible: (relEff && ci)
+
+
+        - name: ciu
+          title: Upper
+          type: number
+          visible: (relEff && ci)

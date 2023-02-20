@@ -1,0 +1,136 @@
+name: bmtest
+title: Independent Samples Brunner Munzel Test
+menuGroup: T-Tests
+version: '1.0.0'
+jas: '1.2'
+
+description:
+    main: |
+        Main Text
+    R:
+        dontrun: false
+        usage: |
+            data('ToothGrowth')
+            ttestIS(formula = len ~ supp, data = ToothGrowth)
+            #
+            #  INDEPENDENT SAMPLES T-TEST
+            #
+            #  Independent Samples T-Test
+            #  ────────────────────────────────────────────────────
+            #                          statistic    df      p
+            #  ────────────────────────────────────────────────────
+            #    len    Student's t         1.92    58.0    0.060
+            #  ────────────────────────────────────────────────────
+            #
+completeWhenFilled: true
+
+formula:
+    vars:
+        from: lhs
+        required: true
+    group:
+        from: rhs
+        subset: 1
+
+options:
+    - name: data
+      type: Data
+      description:
+          R: the data as a data frame
+
+    - name: vars
+      title: Dependent Variables
+      type: Variables
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+      rejectInf: false
+      description:
+          ui: >
+            the dependent variables -- a separate Brunner-Munzel Test is performed for each
+            dependent variable specified.
+          R: >
+            the dependent variables (not necessary when using a formula, see
+            the examples)
+    - name: group
+      title: Grouping Variable
+      type: Variable
+      suggested:
+        - nominal
+        - ordinal
+      permitted:
+        - factor
+      description:
+          ui: >
+            the variable specifying the groups; must have 2 levels.
+          R: >
+            the grouping variable with two levels (not necessary when
+            using a formula, see the examples)
+    - name: hypothesis
+      title: Alternative hypothesis
+      type: List
+      options:
+        - name: different
+          title: "Group 1 ≠ Group 2"
+        - name: oneGreater
+          title: "Group 1 > Group 2"
+        - name: twoGreater
+          title: "Group 1 < Group 2"
+      default: different
+      description:
+          ui: >
+            the alternative hypothesis.
+          R: >
+            `'different'` (default), `'oneGreater'` or
+            `'twoGreater'`, the alternative hypothesis; group 1 different
+            to group 2, group 1 greater than group 2, and group 2 greater than
+            group 1 respectively
+    - name: relEff
+      title: Relative Effect
+      type: Bool
+      default: false
+      description:
+          ui: >
+            provide estimate of relative effect
+          R: >
+            `TRUE` or `FALSE` (default), provide estimate of relative effect
+    - name: ci
+      title: Confidence Interval
+      type: Bool
+      default: false
+      description:
+          ui: >
+            provide confidence intervals for relative effect.
+          R: >
+            `TRUE` or `FALSE` (default), provide confidence intervals
+    - name: ciWidth
+      title: Confidence level
+      type: Number
+      min: 50
+      max: 99.9
+      default: 95
+      description:
+          ui: >
+            the confidence interval width.
+          R: >
+            a number between 50 and 99.9 (default: 95), the width of confidence
+            intervals
+    - name: miss
+      title: Missing values
+      type: List
+      options:
+        - perAnalysis
+        - listwise
+      default: perAnalysis
+      description:
+          ui: >
+            the missing value exclusion method. `Analysis by analysis`
+            excludes missing values from each analysis. `Listwise` excludes
+            a row from all analyses if one of its values is missing.
+          R: >
+            `'perAnalysis'` or `'listwise'`, how to handle missing
+            values; `'perAnalysis'` excludes missing values for individual
+            dependent variables, `'listwise'` excludes a row from all
+            analyses if one of its entries is missing.
+...
