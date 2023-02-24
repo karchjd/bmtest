@@ -12,7 +12,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             relEff = FALSE,
             ci = FALSE,
             ciWidth = 95,
-            miss = "perAnalysis", ...) {
+            miss = "perAnalysis",
+            asym = FALSE,
+            randomPerm = TRUE, ...) {
 
             super$initialize(
                 package="bmtest",
@@ -65,6 +67,14 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "perAnalysis",
                     "listwise"),
                 default="perAnalysis")
+            private$..asym <- jmvcore::OptionBool$new(
+                "asym",
+                asym,
+                default=FALSE)
+            private$..randomPerm <- jmvcore::OptionBool$new(
+                "randomPerm",
+                randomPerm,
+                default=TRUE)
 
             self$.addOption(private$..vars)
             self$.addOption(private$..group)
@@ -73,6 +83,8 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..ci)
             self$.addOption(private$..ciWidth)
             self$.addOption(private$..miss)
+            self$.addOption(private$..asym)
+            self$.addOption(private$..randomPerm)
         }),
     active = list(
         vars = function() private$..vars$value,
@@ -81,7 +93,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         relEff = function() private$..relEff$value,
         ci = function() private$..ci$value,
         ciWidth = function() private$..ciWidth$value,
-        miss = function() private$..miss$value),
+        miss = function() private$..miss$value,
+        asym = function() private$..asym$value,
+        randomPerm = function() private$..randomPerm$value),
     private = list(
         ..vars = NA,
         ..group = NA,
@@ -89,7 +103,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..relEff = NA,
         ..ci = NA,
         ..ciWidth = NA,
-        ..miss = NA)
+        ..miss = NA,
+        ..asym = NA,
+        ..randomPerm = NA)
 )
 
 bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -112,7 +128,9 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 clearWith=list(
                     "group",
                     "hypothesis",
-                    "miss"),
+                    "miss",
+                    "ciWidth",
+                    "comp"),
                 columns=list(
                     list(
                         `name`="var", 
@@ -121,33 +139,85 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="text", 
                         `combineBelow`=TRUE),
                     list(
-                        `name`="stat", 
+                        `name`="test[asym]", 
+                        `title`="", 
+                        `type`="text", 
+                        `content`="t-Approximation", 
+                        `visible`="(asym)"),
+                    list(
+                        `name`="stat[asym]", 
                         `title`="Statistic", 
-                        `type`="number"),
+                        `type`="number", 
+                        `visible`="(asym)"),
                     list(
-                        `name`="df", 
+                        `name`="df[asym]", 
                         `title`="df", 
-                        `type`="number"),
+                        `type`="number", 
+                        `visible`="(asym)"),
                     list(
-                        `name`="p", 
+                        `name`="p[asym]", 
                         `title`="p", 
                         `type`="number", 
-                        `format`="zto,pvalue"),
+                        `format`="zto,pvalue", 
+                        `visible`="(asym)"),
                     list(
-                        `name`="relEff", 
+                        `name`="relEff[asym]", 
                         `title`="Relative Effect", 
                         `type`="number", 
-                        `visible`="(relEff)"),
+                        `visible`="(relEff && asym)"),
                     list(
-                        `name`="cil", 
+                        `name`="cil[asym]", 
                         `title`="Lower", 
                         `type`="number", 
-                        `visible`="(relEff && ci)"),
+                        `visible`="(relEff && ci && asym)"),
                     list(
-                        `name`="ciu", 
+                        `name`="ciu[asym]", 
                         `title`="Upper", 
                         `type`="number", 
-                        `visible`="(relEff && ci)"))))}))
+                        `visible`="(relEff && ci && asym)"),
+                    list(
+                        `name`="var", 
+                        `title`="", 
+                        `content`="($key)", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="test[randomPerm]", 
+                        `title`="", 
+                        `type`="text", 
+                        `content`="random Permutations", 
+                        `visible`="(randomPerm)"),
+                    list(
+                        `name`="stat[randomPerm]", 
+                        `title`="Statistic", 
+                        `type`="number", 
+                        `visible`="(randomPerm)"),
+                    list(
+                        `name`="df[randomPerm]", 
+                        `title`="df", 
+                        `type`="number", 
+                        `visible`="(randomPerm)"),
+                    list(
+                        `name`="p[randomPerm]", 
+                        `title`="p", 
+                        `type`="number", 
+                        `format`="zto,pvalue", 
+                        `visible`="(randomPerm)"),
+                    list(
+                        `name`="relEff[randomPerm]", 
+                        `title`="Relative Effect", 
+                        `type`="number", 
+                        `visible`="(relEff && randomPerm)"),
+                    list(
+                        `name`="cil[randomPerm]", 
+                        `title`="Lower", 
+                        `type`="number", 
+                        `visible`="(relEff && ci && randomPerm)"),
+                    list(
+                        `name`="ciu[randomPerm]", 
+                        `title`="Upper", 
+                        `type`="number", 
+                        `visible`="(relEff && ci && randomPerm)"))))}))
 
 bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "bmtestBase",
@@ -207,7 +277,10 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   missing values; \code{'perAnalysis'} excludes missing values for individual
 #'   dependent variables, \code{'listwise'} excludes a row from all analyses if
 #'   one of its entries is missing.
-#' @param formula (optional) the formula to use, see the examples
+#' @param asym \code{TRUE} (default) or \code{FALSE}, Compute p values and
+#'   confidence intervals using t-approximation
+#' @param randomPerm \code{TRUE} (default) or \code{FALSE}, Compute p values
+#'   and confidence intervals using random permutations
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$bmtest} \tab \tab \tab \tab \tab a table containing the Brunner Munzel Test results \cr
@@ -229,25 +302,11 @@ bmtest <- function(
     ci = FALSE,
     ciWidth = 95,
     miss = "perAnalysis",
-    formula) {
+    asym = FALSE,
+    randomPerm = TRUE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("bmtest requires jmvcore to be installed (restart may be required)")
-
-    if ( ! missing(formula)) {
-        if (missing(vars))
-            vars <- jmvcore::marshalFormula(
-                formula=formula,
-                data=`if`( ! missing(data), data, NULL),
-                from="lhs",
-                required=TRUE)
-        if (missing(group))
-            group <- jmvcore::marshalFormula(
-                formula=formula,
-                data=`if`( ! missing(data), data, NULL),
-                from="rhs",
-                subset="1")
-    }
 
     if ( ! missing(vars)) vars <- jmvcore::resolveQuo(jmvcore::enquo(vars))
     if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))
@@ -266,7 +325,9 @@ bmtest <- function(
         relEff = relEff,
         ci = ci,
         ciWidth = ciWidth,
-        miss = miss)
+        miss = miss,
+        asym = asym,
+        randomPerm = randomPerm)
 
     analysis <- bmtestClass$new(
         options = options,

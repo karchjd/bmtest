@@ -65,10 +65,6 @@ bmtestClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                 res <- createError('Variable contains infinite values')
             }
             else {
-
-                x <- dataTTest$dep[dataTTest$group == groupLevels[1]]
-                y <- dataTTest$dep[dataTTest$group == groupLevels[2]]
-
                 if (self$options$hypothesis == 'oneGreater') {
                     HA <- "greater"
                 }
@@ -80,92 +76,154 @@ bmtestClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
                 }
 
 
+                if(self$options$asym){
+                    res <- try(suppressWarnings(
+                        brunnermunzel::brunnermunzel.test(dep ~ group, data=dataTTest,
+                                                          alternative=HA,
+                                                          alpha=1-confInt)
+                    ), silent=TRUE)
+                    statistic <- res$statistic
+                    parameter <- res$parameter
+                    p_value <- res$p.value
+                    mm <- res$estimate
+                    cil <- res$conf.int[1]
+                    ciu <- res$conf.int[2]
+                    if(HA == "greater" || HA == "two.sided"){
+                        mm <- 1-mm
+                        cil_orig <- cil
+                        cil <- 1-ciu
+                        ciu <- 1-cil_orig
+                    }
 
-                res <- try(suppressWarnings(
-                    brunnermunzel::brunnermunzel.test(
-                        x=y,
-                        y=x,
-                        alternative=HA,
-                        alpha=1-confInt)
-                ), silent=TRUE)
-                print(confInt)
-                mm <- res$estimate
-                cil <- res$conf.int[1]
-                ciu <- res$conf.int[2]
 
-                if(HA == "greater" || HA == "two.sided"){
-                    mm <- 1-mm
-                    cil_orig <- cil
-                    cil <- 1-ciu
-                    ciu <- 1-cil_orig
+
+                    if ( ! jmvcore::isError(res)) {
+
+                        ttestTable$setRow(rowKey=depName, list(
+                            "stat[asym]"=statistic,
+                            "df[asym]"=parameter,
+                            "p[asym]"=p_value,
+                            "relEff[asym]"=mm,
+                            "cil[asym]"=cil,
+                            "ciu[asym]"=ciu
+                        ))
+
+                    } else {
+
+                        ttestTable$setRow(rowKey=depName, list(
+                            "stat[asym]"=NaN,
+                            "df[asym]"='',
+                            "p[asym]"='',
+                            "cil[asym]"='',
+                            "ciu[asym]"=''
+                        ))
+
+                        message <- jmvcore::extractErrorMessage(res)
+                        if (message == 'grouping factor must have exactly 2 levels')
+                            message <- .('One or both groups do not contain enough observations')
+                        else if (message == 'not enough observations')
+                            message <- .('One or both groups do not contain enough observations')
+                        else if (message == 'cannot compute confidence interval when all observations are tied')
+                            message <- .('All observations are tied')
+
+                        ttestTable$addFootnote(rowKey=depName, 'stat', message)
+                    }
                 }
 
+                if(self$options$randomPerm){
+                    res <- try(suppressWarnings(
+                        nparcomp::npar.t.test(dep ~ group, data=dataTTest,
+                                              alternative=HA,
+                                              conf.level=confInt,
+                                              method = "permu",
+                                              info = FALSE)
+                    ), silent=TRUE)
 
+                    res_sel <- as.numeric(res$Analysis["id", ])
+                    names(res_sel) <- colnames(res$Analysis)
+                    statistic <- res_sel["Statistic"]
+                    parameter <- ""
+                    p_value <- res_sel["p.value"]
+                    mm <- res_sel["Estimator"]
+                    cil <- res_sel["Lower"]
+                    ciu <- res_sel["Upper"]
+                    if(HA == "greater" || HA == "two.sided"){
+                        mm <- 1-mm
+                        cil_orig <- cil
+                        cil <- 1-ciu
+                        ciu <- 1-cil_orig
+                    }
+
+
+
+                    if ( ! jmvcore::isError(res)) {
+
+                        ttestTable$setRow(rowKey=depName, list(
+                            "stat[randomPerm]"=statistic,
+                            "df[randomPerm]"=parameter,
+                            "p[randomPerm]"=p_value,
+                            "relEff[randomPerm]"=mm,
+                            "cil[randomPerm]"=cil,
+                            "ciu[randomPerm]"=ciu
+                        ))
+
+                    } else {
+
+                        ttestTable$setRow(rowKey=depName, list(
+                            "stat[randomPerm]"=NaN,
+                            "df[randomPerm]"='',
+                            "p[randomPerm]"='',
+                            "cil[randomPerm]"='',
+                            "ciu[randomPerm]"=''
+                        ))
+
+                        message <- jmvcore::extractErrorMessage(res)
+                        if (message == 'grouping factor must have exactly 2 levels')
+                            message <- .('One or both groups do not contain enough observations')
+                        else if (message == 'not enough observations')
+                            message <- .('One or both groups do not contain enough observations')
+                        else if (message == 'cannot compute confidence interval when all observations are tied')
+                            message <- .('All observations are tied')
+
+                        ttestTable$addFootnote(rowKey=depName, 'stat', message)
+                    }
+                }
             }
 
-            if ( ! jmvcore::isError(res)) {
+        }}  ,
+        .init=function() {
 
-                ttestTable$setRow(rowKey=depName, list(
-                    "stat"=res$statistic,
-                    "df"=res$parameter,
-                    "p"=res$p.value,
-                    "relEff"=mm,
-                    "cil"=cil,
-                    "ciu"=ciu
-                ))
+            hypothesis <- self$options$hypothesis
+            groupName <- self$options$group
 
-            } else {
+            groups <- NULL
+            if ( ! is.null(groupName))
+                groups <- base::levels(self$data[[groupName]])
+            if (length(groups) != 2)
+                groups <- c('Group 1', 'Group 2')
 
-                ttestTable$setRow(rowKey=depName, list(
-                    "stat"=NaN,
-                    "df"='',
-                    "p"='',
-                    "cil"='',
-                    "ciu"=''
-                ))
+            table <- self$results$bmtest
 
-                message <- jmvcore::extractErrorMessage(res)
-                if (message == 'grouping factor must have exactly 2 levels')
-                    message <- .('One or both groups do not contain enough observations')
-                else if (message == 'not enough observations')
-                    message <- .('One or both groups do not contain enough observations')
-                else if (message == 'cannot compute confidence interval when all observations are tied')
-                    message <- .('All observations are tied')
+            ciTitleString <- '{ciWidth}% Confidence Interval'
 
-                ttestTable$addFootnote(rowKey=depName, 'stat', message)
-            }
+            ciTitle <- jmvcore::format(ciTitleString, ciWidth=self$options$ciWidth)
+            table$getColumn('ciu[asym]')$setSuperTitle(ciTitle)
+            table$getColumn('cil[asym]')$setSuperTitle(ciTitle)
+            table$getColumn('ciu[randomPerm]')$setSuperTitle(ciTitle)
+            table$getColumn('cil[randomPerm]')$setSuperTitle(ciTitle)
+
+
+            table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+            table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+
+            if (hypothesis == 'oneGreater')
+                table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
+            else if (hypothesis == 'twoGreater')
+                table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
+            else
+                table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
         }
-    }
-    ,
-    .init=function() {
-
-        hypothesis <- self$options$hypothesis
-        groupName <- self$options$group
-
-        groups <- NULL
-        if ( ! is.null(groupName))
-            groups <- base::levels(self$data[[groupName]])
-        if (length(groups) != 2)
-            groups <- c('Group 1', 'Group 2')
-
-        table <- self$results$bmtest
-
-        ciTitleString <- '{ciWidth}% Confidence Interval'
-
-        ciTitle <- jmvcore::format(ciTitleString, ciWidth=self$options$ciWidth)
-        table$getColumn('ciu')$setSuperTitle(ciTitle)
-        table$getColumn('cil')$setSuperTitle(ciTitle)
-
-        table$getColumn('relEff')$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-
-        if (hypothesis == 'oneGreater')
-            table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
-        else if (hypothesis == 'twoGreater')
-            table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
-        else
-            table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
-
-    }    )
+    )
 )
 
 

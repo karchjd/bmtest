@@ -9,4 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, brunnermunzel (>= 1.4.1)
+Imports: jmvcore (>= 0.8.5), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

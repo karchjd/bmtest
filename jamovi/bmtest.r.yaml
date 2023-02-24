@@ -13,6 +13,8 @@ items:
         - group
         - hypothesis
         - miss
+        - ciWidth
+        - comp
 
       columns:
         - name: var
@@ -21,33 +23,91 @@ items:
           type: text
           combineBelow: true
 
+        - name: test[asym]
+          title: ''
+          type: text
+          content: t-Approximation
+          visible: (asym)
 
-        - name: stat
+
+        - name: stat[asym]
           title: Statistic
           type: number
+          visible: (asym)
 
 
-        - name: df
+        - name: df[asym]
           title: df
           type: number
+          visible: (asym)
 
-        - name: p
+
+        - name: p[asym]
           title: p
           type: number
           format: zto,pvalue
+          visible: (asym)
 
-        - name: relEff
+        - name: relEff[asym]
           title: Relative Effect
           type: number
-          visible: (relEff)
+          visible: (relEff && asym)
 
-        - name: cil
+        - name: cil[asym]
           title: Lower
           type: number
-          visible: (relEff && ci)
+          visible: (relEff && ci && asym)
 
 
-        - name: ciu
+        - name: ciu[asym]
           title: Upper
           type: number
-          visible: (relEff && ci)
+          visible: (relEff && ci && asym)
+
+        - name: var
+          title: ""
+          content: ($key)
+          type: text
+          combineBelow: true
+
+        - name: test[randomPerm]
+          title: ''
+          type: text
+          content: Random Permutations
+          visible: (randomPerm)
+
+
+        - name: stat[randomPerm]
+          title: Statistic
+          type: number
+          visible: (randomPerm)
+
+
+        - name: df[randomPerm]
+          title: df
+          type: number
+          visible: (randomPerm)
+
+
+        - name: p[randomPerm]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (randomPerm)
+
+        - name: relEff[randomPerm]
+          title: Relative Effect
+          type: number
+          visible: (relEff && randomPerm)
+
+        - name: cil[randomPerm]
+          title: Lower
+          type: number
+          visible: (relEff && ci && randomPerm)
+
+
+        - name: ciu[randomPerm]
+          title: Upper
+          type: number
+          visible: (relEff && ci && randomPerm)
+

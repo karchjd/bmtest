@@ -29,8 +29,8 @@ children:
     children:
       - type: LayoutBox
         cell:
-            column: 0
-            row: 0
+          column: 0
+          row: 0
         stretchFactor: 1
         children:
           - type: Label
@@ -40,20 +40,17 @@ children:
                 name: hypothesis_different
                 optionName: hypothesis
                 optionPart: different
-                label: "Group 1 ≠ Group 2"
-
+                label: Group 1 ≠ Group 2
               - type: RadioButton
                 name: hypothesis_oneGreater
                 optionName: hypothesis
                 optionPart: oneGreater
-                label: "Group 1 > Group 2"
-
+                label: Group 1 > Group 2
               - type: RadioButton
                 name: hypothesis_twoGreater
                 optionName: hypothesis
                 optionPart: twoGreater
-                label: "Group 1 < Group 2"
-
+                label: Group 1 < Group 2
           - type: Label
             label: Missing values
             children:
@@ -62,17 +59,22 @@ children:
                 optionName: miss
                 optionPart: perAnalysis
                 label: Exclude cases analysis by analysis
-
               - type: RadioButton
                 name: miss_listwise
                 optionName: miss
                 optionPart: listwise
                 label: Exclude cases listwise
-
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: asym
+              - type: CheckBox
+                name: randomPerm
       - type: LayoutBox
         cell:
-            column: 1
-            row: 0
+          column: 1
+          row: 0
         stretchFactor: 1
         children:
           - type: Label
@@ -84,16 +86,19 @@ children:
                 children:
                   - type: LayoutBox
                     children:
-                    - type: CheckBox
-                      name: ci
-                      label: Confidence interval
-                      enable: (relEff)
-                      style: inline
-                      verticalAlignment: center
-                      children:
-                        - type: TextBox
-                          name: ciWidth
-                          label: ""
-                          suffix: "%"
-                          format: number
-                          enable: (relEff && ci)
+                      - type: CheckBox
+                        name: ci
+                        label: Confidence interval
+                        enable: (relEff)
+                        style: inline
+                        verticalAlignment: center
+                        children:
+                          - type: TextBox
+                            name: ciWidth
+                            label: ''
+                            suffix: '%'
+                            format: number
+                            enable: (ci)
+          - type: Label
+            label: Computation
+            children: []
