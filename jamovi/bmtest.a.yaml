@@ -128,7 +128,7 @@ options:
     - name: asym
       title: Asymptotic Test
       type: Bool
-      default: false
+      default: true
       description:
           ui: >
             Compute p values and confidence intervals using t-approximation
@@ -137,10 +137,29 @@ options:
     - name: randomPerm
       title: Random Permutation Test
       type: Bool
-      default: TRUE
+      default: false
       description:
           ui: >
             Compute p values and confidence intervals using random permutations
           R: >
-            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using random permutations
+            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using random permutation
+    - name: fullPerm
+      title: Full Permutation Test
+      type: Bool
+      default: false
+      description:
+          ui: >
+            Compute p values and confidence intervals using ALL permutations
+          R: >
+            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using ALL permutation
+    - name: n_perm
+      title: Number of Permutations
+      type: Number
+      min: 40
+      default: 10000
+      description:
+          ui: >
+            the number of random permutations
+          R: >
+            a integer (default 10000), the number of random permutations
 ...

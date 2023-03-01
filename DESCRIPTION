@@ -1,15 +1,14 @@
 Package: bmtest
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.0.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Brunner Munzel Test
+Version: 0.0.1
+Author:  Julian D. Karch
+Maintainer: Julian D. Karch <j.d.karch@fsw.leidenuniv.nl>
+Description: Provides the Brunner-Munzel test in all three main variants (t-approximation, random permutations, and full permutations). Is primarily written for jamovi but is also useful as a standalone R package.
+License:  GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0)
+Imports: jmvcore (>= 2.3.19), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0)
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

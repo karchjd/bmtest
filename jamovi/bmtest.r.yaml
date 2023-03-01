@@ -14,7 +14,7 @@ items:
         - hypothesis
         - miss
         - ciWidth
-        - comp
+        - n_perm
 
       columns:
         - name: var
@@ -110,4 +110,45 @@ items:
           title: Upper
           type: number
           visible: (relEff && ci && randomPerm)
+
+        - name: test[fullPerm]
+          title: ''
+          type: text
+          content: All Permutations
+          visible: (fullPerm)
+
+
+        - name: stat[fullPerm]
+          title: Statistic
+          type: number
+          visible: (fullPerm)
+
+
+        - name: df[fullPerm]
+          title: df
+          type: number
+          visible: (fullPerm)
+
+
+        - name: p[fullPerm]
+          title: p
+          type: number
+          format: zto,pvalue
+          visible: (fullPerm)
+
+        - name: relEff[fullPerm]
+          title: Relative Effect
+          type: number
+          visible: (relEff && fullPerm)
+
+        - name: cil[fullPerm]
+          title: Lower
+          type: number
+          visible: (relEff && ci && fullPerm)
+
+
+        - name: ciu[fullPerm]
+          title: Upper
+          type: number
+          visible: (relEff && ci && fullPerm)
 

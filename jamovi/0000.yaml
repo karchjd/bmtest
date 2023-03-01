@@ -1,16 +1,17 @@
 ---
-title: What the Package Does (Title Case)
+title: Brunner Munzel Test
 name: bmtest
-version: 0.0.0
+version: 0.0.1
 jms: '1.0'
 authors:
-  - Who wrote it
-maintainer: The package maintainer <yourself@somewhere.net>
-date: '1970-01-01'
+  - Julian D Karch
+maintainer: Julian D. Karch <j.d.karch@fsw.leidenuniv.nl>
+date: '2023-02-27'
 type: R
 description: >-
-  More about what it does (maybe more than one line) Use four spaces when
-  indenting paragraphs within the Description.
+  Provides the Brunner-Munzel test in all three main variants (t-approximation,
+  random permutations, and full permutations). Also provides estimates of
+  associated effect sizes
 analyses:
   - title: Independent Samples Brunner Munzel Test
     name: bmtest

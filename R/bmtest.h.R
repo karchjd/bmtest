@@ -13,8 +13,10 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ci = FALSE,
             ciWidth = 95,
             miss = "perAnalysis",
-            asym = FALSE,
-            randomPerm = TRUE, ...) {
+            asym = TRUE,
+            randomPerm = FALSE,
+            fullPerm = FALSE,
+            n_perm = 10000, ...) {
 
             super$initialize(
                 package="bmtest",
@@ -70,11 +72,20 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..asym <- jmvcore::OptionBool$new(
                 "asym",
                 asym,
-                default=FALSE)
+                default=TRUE)
             private$..randomPerm <- jmvcore::OptionBool$new(
                 "randomPerm",
                 randomPerm,
-                default=TRUE)
+                default=FALSE)
+            private$..fullPerm <- jmvcore::OptionBool$new(
+                "fullPerm",
+                fullPerm,
+                default=FALSE)
+            private$..n_perm <- jmvcore::OptionNumber$new(
+                "n_perm",
+                n_perm,
+                min=40,
+                default=10000)
 
             self$.addOption(private$..vars)
             self$.addOption(private$..group)
@@ -85,6 +96,8 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..miss)
             self$.addOption(private$..asym)
             self$.addOption(private$..randomPerm)
+            self$.addOption(private$..fullPerm)
+            self$.addOption(private$..n_perm)
         }),
     active = list(
         vars = function() private$..vars$value,
@@ -95,7 +108,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ciWidth = function() private$..ciWidth$value,
         miss = function() private$..miss$value,
         asym = function() private$..asym$value,
-        randomPerm = function() private$..randomPerm$value),
+        randomPerm = function() private$..randomPerm$value,
+        fullPerm = function() private$..fullPerm$value,
+        n_perm = function() private$..n_perm$value),
     private = list(
         ..vars = NA,
         ..group = NA,
@@ -105,7 +120,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..ciWidth = NA,
         ..miss = NA,
         ..asym = NA,
-        ..randomPerm = NA)
+        ..randomPerm = NA,
+        ..fullPerm = NA,
+        ..n_perm = NA)
 )
 
 bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -130,7 +147,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "hypothesis",
                     "miss",
                     "ciWidth",
-                    "comp"),
+                    "n_perm"),
                 columns=list(
                     list(
                         `name`="var", 
@@ -185,7 +202,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="test[randomPerm]", 
                         `title`="", 
                         `type`="text", 
-                        `content`="random Permutations", 
+                        `content`="Random Permutations", 
                         `visible`="(randomPerm)"),
                     list(
                         `name`="stat[randomPerm]", 
@@ -217,7 +234,44 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="ciu[randomPerm]", 
                         `title`="Upper", 
                         `type`="number", 
-                        `visible`="(relEff && ci && randomPerm)"))))}))
+                        `visible`="(relEff && ci && randomPerm)"),
+                    list(
+                        `name`="test[fullPerm]", 
+                        `title`="", 
+                        `type`="text", 
+                        `content`="All Permutations", 
+                        `visible`="(fullPerm)"),
+                    list(
+                        `name`="stat[fullPerm]", 
+                        `title`="Statistic", 
+                        `type`="number", 
+                        `visible`="(fullPerm)"),
+                    list(
+                        `name`="df[fullPerm]", 
+                        `title`="df", 
+                        `type`="number", 
+                        `visible`="(fullPerm)"),
+                    list(
+                        `name`="p[fullPerm]", 
+                        `title`="p", 
+                        `type`="number", 
+                        `format`="zto,pvalue", 
+                        `visible`="(fullPerm)"),
+                    list(
+                        `name`="relEff[fullPerm]", 
+                        `title`="Relative Effect", 
+                        `type`="number", 
+                        `visible`="(relEff && fullPerm)"),
+                    list(
+                        `name`="cil[fullPerm]", 
+                        `title`="Lower", 
+                        `type`="number", 
+                        `visible`="(relEff && ci && fullPerm)"),
+                    list(
+                        `name`="ciu[fullPerm]", 
+                        `title`="Upper", 
+                        `type`="number", 
+                        `visible`="(relEff && ci && fullPerm)"))))}))
 
 bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "bmtestBase",
@@ -280,7 +334,10 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param asym \code{TRUE} (default) or \code{FALSE}, Compute p values and
 #'   confidence intervals using t-approximation
 #' @param randomPerm \code{TRUE} (default) or \code{FALSE}, Compute p values
-#'   and confidence intervals using random permutations
+#'   and confidence intervals using random permutation
+#' @param fullPerm \code{TRUE} (default) or \code{FALSE}, Compute p values and
+#'   confidence intervals using ALL permutation
+#' @param n_perm a integer (default 10000), the number of random permutations
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$bmtest} \tab \tab \tab \tab \tab a table containing the Brunner Munzel Test results \cr
@@ -302,8 +359,10 @@ bmtest <- function(
     ci = FALSE,
     ciWidth = 95,
     miss = "perAnalysis",
-    asym = FALSE,
-    randomPerm = TRUE) {
+    asym = TRUE,
+    randomPerm = FALSE,
+    fullPerm = FALSE,
+    n_perm = 10000) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("bmtest requires jmvcore to be installed (restart may be required)")
@@ -327,7 +386,9 @@ bmtest <- function(
         ciWidth = ciWidth,
         miss = miss,
         asym = asym,
-        randomPerm = randomPerm)
+        randomPerm = randomPerm,
+        fullPerm = fullPerm,
+        n_perm = n_perm)
 
     analysis <- bmtestClass$new(
         options = options,

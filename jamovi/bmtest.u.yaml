@@ -34,6 +34,24 @@ children:
         stretchFactor: 1
         children:
           - type: Label
+            label: Tests
+            children:
+              - type: CheckBox
+                name: asym
+              - type: CheckBox
+                name: randomPerm
+                children:
+                  - type: TextBox
+                    name: n_perm
+                    label: Number Permutations
+                    format: number
+                    enable: (randomPerm)
+              - type: CheckBox
+                name: fullPerm
+
+
+
+          - type: Label
             label: Hypothesis
             children:
               - type: RadioButton
@@ -64,13 +82,6 @@ children:
                 optionName: miss
                 optionPart: listwise
                 label: Exclude cases listwise
-          - type: LayoutBox
-            margin: large
-            children:
-              - type: CheckBox
-                name: asym
-              - type: CheckBox
-                name: randomPerm
       - type: LayoutBox
         cell:
           column: 1
@@ -89,7 +100,7 @@ children:
                       - type: CheckBox
                         name: ci
                         label: Confidence interval
-                        enable: (relEff)
+                        enable: (relEff && (asym || randomPerm))
                         style: inline
                         verticalAlignment: center
                         children:
@@ -99,6 +110,3 @@ children:
                             suffix: '%'
                             format: number
                             enable: (ci)
-          - type: Label
-            label: Computation
-            children: []
