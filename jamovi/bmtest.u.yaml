@@ -34,7 +34,7 @@ children:
         stretchFactor: 1
         children:
           - type: Label
-            label: Tests
+            label: Test Type
             children:
               - type: CheckBox
                 name: asym

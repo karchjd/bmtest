@@ -141,14 +141,3 @@ items:
           type: number
           visible: (relEff && fullPerm)
 
-        - name: cil[fullPerm]
-          title: Lower
-          type: number
-          visible: (relEff && ci && fullPerm)
-
-
-        - name: ciu[fullPerm]
-          title: Upper
-          type: number
-          visible: (relEff && ci && fullPerm)
-

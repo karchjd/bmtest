@@ -16,10 +16,11 @@ analyses:
   - title: Independent Samples Brunner Munzel Test
     name: bmtest
     ns: bmtest
-    menuGroup: T-Tests
+    menuGroup: BM-Test
     menuTitle: Independent Samples Brunner Munzel Test
-    description: |
-      Main Text
+    description: >
+      The Brunner–Munzel test for stochastic equality of two samples, which is
+      also known as the Generalized Wilcoxon test.
 usesNative: true
 minApp: 1.0.8
 

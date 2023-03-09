@@ -1,28 +1,37 @@
 name: bmtest
 title: Independent Samples Brunner Munzel Test
-menuGroup: T-Tests
+menuGroup: BM-Test
 version: '1.0.0'
 jas: '1.2'
 
 description:
     main: |
-        Main Text
+        The Brunner–Munzel test for stochastic equality of two samples, which is also known as the Generalized Wilcoxon test.
     R:
         dontrun: false
         usage: |
+            library(jmv) # to get ToothGrowth data set
             data('ToothGrowth')
-            ttestIS(formula = len ~ supp, data = ToothGrowth)
+            bmtest(formula = len ~ supp, data = ToothGrowth)
+            # INDEPENDENT SAMPLES BRUNNER MUNZEL TEST
             #
-            #  INDEPENDENT SAMPLES T-TEST
-            #
-            #  Independent Samples T-Test
-            #  ────────────────────────────────────────────────────
-            #                          statistic    df      p
-            #  ────────────────────────────────────────────────────
-            #    len    Student's t         1.92    58.0    0.060
-            #  ────────────────────────────────────────────────────
-            #
+            # Independent Samples Brunner Munzel Test
+            # ────────────────────────────────────────────────────────────────
+            #                             Statistic    df          p
+            # ────────────────────────────────────────────────────────────────
+            #   len    t-Approximation    -1.896526    54.67724    0.0631786
+            # ────────────────────────────────────────────────────────────────
+            #   Note. Hₐ P(OJ > VC) + ½P(OJ = VC) ≠ ½
+
 completeWhenFilled: true
+
+formula:
+    vars:
+        from: lhs
+        required: true
+    group:
+        from: rhs
+        subset: 1
 
 options:
     - name: data
@@ -137,7 +146,7 @@ options:
     - name: randomPerm
       title: Random Permutation Test
       type: Bool
-      default: false
+      default: true
       description:
           ui: >
             Compute p values and confidence intervals using random permutations

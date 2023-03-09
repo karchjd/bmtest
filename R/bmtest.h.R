@@ -14,7 +14,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ciWidth = 95,
             miss = "perAnalysis",
             asym = TRUE,
-            randomPerm = FALSE,
+            randomPerm = TRUE,
             fullPerm = FALSE,
             n_perm = 10000, ...) {
 
@@ -76,7 +76,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..randomPerm <- jmvcore::OptionBool$new(
                 "randomPerm",
                 randomPerm,
-                default=FALSE)
+                default=TRUE)
             private$..fullPerm <- jmvcore::OptionBool$new(
                 "fullPerm",
                 fullPerm,
@@ -261,17 +261,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="relEff[fullPerm]", 
                         `title`="Relative Effect", 
                         `type`="number", 
-                        `visible`="(relEff && fullPerm)"),
-                    list(
-                        `name`="cil[fullPerm]", 
-                        `title`="Lower", 
-                        `type`="number", 
-                        `visible`="(relEff && ci && fullPerm)"),
-                    list(
-                        `name`="ciu[fullPerm]", 
-                        `title`="Upper", 
-                        `type`="number", 
-                        `visible`="(relEff && ci && fullPerm)"))))}))
+                        `visible`="(relEff && fullPerm)"))))}))
 
 bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "bmtestBase",
@@ -295,22 +285,23 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Independent Samples Brunner Munzel Test
 #'
-#' Main Text
+#' The Brunner–Munzel test for stochastic equality of two samples, which is 
+#' also known as the Generalized Wilcoxon test.
 #' 
 #'
 #' @examples
+#' library(jmv) # to get ToothGrowth data set
 #' data('ToothGrowth')
-#' ttestIS(formula = len ~ supp, data = ToothGrowth)
+#' bmtest(formula = len ~ supp, data = ToothGrowth)
+#' # INDEPENDENT SAMPLES BRUNNER MUNZEL TEST
 #' #
-#' #  INDEPENDENT SAMPLES T-TEST
-#' #
-#' #  Independent Samples T-Test
-#' #  ----------------------------------------------------
-#' #                          statistic    df      p
-#' #  ----------------------------------------------------
-#' #    len    Student's t         1.92    58.0    0.060
-#' #  ----------------------------------------------------
-#' #
+#' # Independent Samples Brunner Munzel Test
+#' # ----------------------------------------------------------------
+#' #                             Statistic    df          p
+#' # ----------------------------------------------------------------
+#' #   len    t-Approximation    -1.896526    54.67724    0.0631786
+#' # ----------------------------------------------------------------
+#' #   Note. Ha P(OJ > VC) + ½P(OJ = VC) != ½
 #'
 #' @param data the data as a data frame
 #' @param vars the dependent variables (not necessary when using a formula,
@@ -338,6 +329,7 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param fullPerm \code{TRUE} (default) or \code{FALSE}, Compute p values and
 #'   confidence intervals using ALL permutation
 #' @param n_perm a integer (default 10000), the number of random permutations
+#' @param formula (optional) the formula to use, see the examples
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$bmtest} \tab \tab \tab \tab \tab a table containing the Brunner Munzel Test results \cr
@@ -360,12 +352,28 @@ bmtest <- function(
     ciWidth = 95,
     miss = "perAnalysis",
     asym = TRUE,
-    randomPerm = FALSE,
+    randomPerm = TRUE,
     fullPerm = FALSE,
-    n_perm = 10000) {
+    n_perm = 10000,
+    formula) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("bmtest requires jmvcore to be installed (restart may be required)")
+
+    if ( ! missing(formula)) {
+        if (missing(vars))
+            vars <- jmvcore::marshalFormula(
+                formula=formula,
+                data=`if`( ! missing(data), data, NULL),
+                from="lhs",
+                required=TRUE)
+        if (missing(group))
+            group <- jmvcore::marshalFormula(
+                formula=formula,
+                data=`if`( ! missing(data), data, NULL),
+                from="rhs",
+                subset="1")
+    }
 
     if ( ! missing(vars)) vars <- jmvcore::resolveQuo(jmvcore::enquo(vars))
     if ( ! missing(group)) group <- jmvcore::resolveQuo(jmvcore::enquo(group))

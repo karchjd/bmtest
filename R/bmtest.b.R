@@ -6,7 +6,17 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
         inherit = bmtestBase,
         private = list(
             .run = function() {
-                ## private functions
+                ## private functions and constants
+                check_parameters <- function(parameters){
+                    if(parameters$ci && !parameters$relEff){
+                        warning("relEff parameter must also be TRUE to get confidence intervals")
+                    }
+
+                    if(parameters$ci && parameters$fullPerm){
+                        warning("Confidence intervals not supported for full permutation approach.")
+                    }
+                }
+
                 revert <- function(estimate, cil = NULL, ciu = NULL, HA) {
                     if (HA == "greater" || HA == "two.sided") {
                         estimate <- 1 - estimate
@@ -14,73 +24,207 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                             cil_orig <- cil
                             cil <- 1 - ciu
                             ciu <- 1 - cil_orig
+                        }else{
+                            cil <- ciu <- ""
                         }
                     }
                     return(list(estimate = estimate, cil = cil, ciu = ciu))
                 }
 
                 check_error <- function(dataTTest, check_n = FALSE) {
-                    res <- 1
                     if (is.factor(dataTTest$dep)) {
-                        res <- jmvcore::createError(("Variable is not numeric"))
-                    } else if (any(is.infinite(dataTTest$dep))) {
-                        res <- jmvcore::createError("Variable contains infinite values")
-                    } else if (check_n) {
-                        ns <- table(dataTTest$group)
+                        return(jmvcore::createError(("Variable is not numeric")))
+                    }
+                    if (any(is.infinite(dataTTest$dep))) {
+                        return(jmvcore::createError("Variable contains infinite values"))
+                    }
+                    ns <- table(dataTTest$group)
+                    if(any(ns == 1)){
+                        return(jmvcore::createError("Not enough observations. Each group must at least contain 2 observations"))
+                    }
+
+                    levels_groups <- levels(dataTTest$group)
+                    g1 <- dataTTest$dep[dataTTest$group == levels_groups[1]]
+                    g2 <- dataTTest$dep[dataTTest$group == levels_groups[2]]
+                    if (length(unique(g1)) == 1 || length(unique(g2)) == 1){
+                        return(jmvcore::createError("Not enough unique observations. Each group must at least contain 2 unique observations"))
+                    }
+
+                    if (check_n) {
                         total_perm <- choose(sum(ns), ns[1])
                         if (total_perm >= 40116600L) {
-                            res <- jmvcore::createError("Number of needed permutations too large to be computationally feasible. Use one of the other two options.")
+                            return(jmvcore::createError("Number of needed permutations too large to be computationally feasible. Use one of the other two options."))
                         }
                     }
-                    return(res)
+                    return(1)
                 }
 
-                ## function defintion
+                preprocess <- function(groupVarName, depVarnames){
+                    if (is.null(groupVarName) || length(depVarNames) == 0) {
+                        return()
+                    }
+
+                    data <- jmvcore::select(self$data, varNames)
+
+                    for (name in depVarNames) {
+                        data[[name]] <- jmvcore::toNumeric(data[[name]])
+                    }
+                    data[[groupVarName]] <- droplevels(as.factor(data[[groupVarName]]))
+
+                    if (any(depVarNames == groupVarName)) {
+                        jmvcore::reject(("Grouping variable '{a}' must not also be a dependent variable"),
+                                        code = "a_is_dependent_variable", a = groupVarName
+                        )
+                    }
+
+                    # exclude rows with missings in the grouping variable
+                    data <- data[!is.na(data[[groupVarName]]), ]
+
+                    groupLevels <- base::levels(data[[groupVarName]])
+
+                    if (length(groupLevels) != 2) {
+                        jmvcore::reject("Grouping variable '{a}' must have exactly 2 levels",
+                                        code = "grouping_var_must_have_2_levels", a = groupVarName
+                        )
+                    }
+
+                    if (self$options$miss == "listwise") {
+                        data <- jmvcore::naOmit(data)
+                        if (dim(data)[1] == 0) {
+                            jmvcore::reject("Grouping variable '{a}' has less than 2 levels after missing values are excluded",
+                                            code = "grouping_var_must_have_2_levels", a = groupVarName
+                            )
+                        }
+                    }
+
+
+                    return(data)
+                }
+
+                check_error_res <- function(res){
+                    if(is.nan(res$parameter)){
+                        return(jmvcore::createError("Results cannot be trusted. Likely caused by an estimated relative effect of very close to 1 or 0.
+                                              Try one of the other test types."))
+                    }else{
+                        return(res)
+                    }
+                }
+
+                run_analysis <- function(type , dataTTest){
+                    if(type == "asym"){
+                        run_test <- function(dataTTest, HA, confInt){
+                            brunnermunzel::brunnermunzel.test(dep ~ group,
+                                                              data = dataTTest,
+                                                              alternative = HA,
+                                                              alpha = 1 - confInt
+                            )
+                        }
+                        extract_res <- function(res){
+                            if(is.nan(res$parameter)){
+                                res$p.value <-NaN
+                            }
+                            res
+                        }
+                        suffix <- "[asym]"
+                        full_name <- "Asymptotic"
+                        check_n <- FALSE
+                    }else if(type == "randomPerm"){
+                        run_test <- function(dataTTest, HA, confInt){
+                            nparcomp::npar.t.test(dep ~ group,
+                                                  data = dataTTest,
+                                                  alternative = HA,
+                                                  conf.level = confInt,
+                                                  method = "permu",
+                                                  info = FALSE, nperm = self$options$n_perm)
+                        }
+                        extract_res <- function(res){
+                            res_sel <- as.numeric(res$Analysis["id", ])
+                            names(res_sel) <- colnames(res$Analysis)
+                            list(statistic = res_sel["Statistic"], parameter = "",
+                                 p.value = res_sel["p.value"], estimate = res_sel["Estimator"],
+                                 conf.int = c(res_sel["Lower"], res_sel["Upper"]))
+                        }
+                        suffix <- "[randomPerm]"
+                        full_name <- "Random Permutations"
+                        check_n <- FALSE
+
+                    } else if (type == "fullPerm"){
+                        run_test <- function(dataTTest, HA, confInt){
+                            res <- brunnermunzel::brunnermunzel.permutation.test(dep ~ group,
+                                                                          data = dataTTest,
+                                                                          alternative = HA,
+                                                                          alpha = 1 - confInt, force = TRUE
+                            )
+                            res_tmp <- brunnermunzel::brunnermunzel.test(dep ~ group,
+                                                                         data = dataTTest,
+                                                                         alternative = HA,
+                                                                         alpha = 1 - confInt
+                            )
+                            res$statistic <- res_tmp$statistic
+                            res
+
+                        }
+                        suffix <- "[fullPerm]"
+                        full_name <- "All Permutations"
+                        extract_res <- function(res){
+                            res$parameter = ""
+                            res
+                        }
+                        check_n <- TRUE
+                    }
+                    is_jamovi <- !private$.dataProvided
+
+                    res <- check_error(dataTTest, check_n)
+                    if (!jmvcore::isError(res)) {
+                        res <- try(suppressWarnings(
+                            run_test(dataTTest, HA, confInt)
+                        ), silent = TRUE)
+                    }
+
+                    res_names <- paste0(c("stat", "df", "p", "relEff", "cil", "ciu"),
+                                        suffix)
+                    if (!jmvcore::isError(res)) {
+                        res <- extract_res(res)
+                        res  <- check_error_res(res)
+                    }
+                    if (!jmvcore::isError(res)) {
+                        ests <- revert(res$estimate, res$conf.int[1], res$conf.int[2], HA)
+                        results <- list(res$statistic, res$parameter, res$p.value,
+                                             ests$estimate, ests$cil, ests$ciu)
+
+                        results_list <- setNames(results, res_names)
+                        ttestTable$setRow(rowKey = depName, results_list)
+                    } else {
+                        results <- as.list(c(NaN, "", "", "", "", ""))
+                        results_list <- setNames(results, res_names)
+                        ttestTable$setRow(rowKey = depName, results_list)
+
+                        message <- jmvcore::extractErrorMessage(res)
+                        if(is_jamovi){
+                            ttestTable$addFootnote(rowKey = depName, paste0("stat",suffix), message)
+                        }else{
+                            format_string <- paste0("For Analysis, Dependent Variable: ", depName, ", Test Type: ", full_name, ": {}")
+                            warning(jmvcore::format(format_string, message))
+                        }
+                    }
+                }
+                is_jamovi <- !private$.dataProvided
+
+                ## preprocessing and initializing
+                if(!is_jamovi){
+                    check_parameters(self$options)
+                }
                 groupVarName <- self$options$group
                 depVarNames <- self$options$vars
                 varNames <- c(groupVarName, depVarNames)
 
-                if (is.null(groupVarName) || length(depVarNames) == 0) {
-                    return()
-                }
 
-                data <- jmvcore::select(self$data, varNames)
 
-                for (name in depVarNames) {
-                    data[[name]] <- jmvcore::toNumeric(data[[name]])
-                }
-                data[[groupVarName]] <- droplevels(as.factor(data[[groupVarName]]))
+                data <- preprocess(groupVarName, depVarNames)
+
 
                 ttestTable <- self$results$bmtest
                 confInt <- self$options$ciWidth / 100
-
-                if (any(depVarNames == groupVarName)) {
-                    jmvcore::reject(("Grouping variable '{a}' must not also be a dependent variable"),
-                                    code = "a_is_dependent_variable", a = groupVarName
-                    )
-                }
-
-                # exclude rows with missings in the grouping variable
-                data <- data[!is.na(data[[groupVarName]]), ]
-
-                groupLevels <- base::levels(data[[groupVarName]])
-
-                if (length(groupLevels) != 2) {
-                    jmvcore::reject("Grouping variable '{a}' must have exactly 2 levels",
-                                    code = "grouping_var_must_have_2_levels", a = groupVarName
-                    )
-                }
-
-                if (self$options$miss == "listwise") {
-                    data <- jmvcore::naOmit(data)
-                    if (dim(data)[1] == 0) {
-                        jmvcore::reject("Grouping variable '{a}' has less than 2 levels after missing values are excluded",
-                                        code = "grouping_var_must_have_2_levels", a = groupVarName
-                        )
-                    }
-                }
-
-                ## Hypothesis options checking
                 if (self$options$hypothesis == "oneGreater") {
                     HA <- "greater"
                 } else if (self$options$hypothesis == "twoGreater") {
@@ -89,6 +233,7 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                     HA <- "two.sided"
                 }
 
+                # actual analysis
                 for (depName in depVarNames) {
                     dataTTest <- data.frame(dep = data[[depName]], group = data[[groupVarName]])
 
@@ -97,141 +242,15 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                     }
 
                     if (self$options$asym) {
-                        res_asym <- check_error(dataTTest)
-                        if (!jmvcore::isError(res_asym)) {
-                            res_asym <- try(suppressWarnings(
-                                brunnermunzel::brunnermunzel.test(dep ~ group,
-                                                                  data = dataTTest,
-                                                                  alternative = HA,
-                                                                  alpha = 1 - confInt
-                                )
-                            ), silent = TRUE)
-                        }
-
-                        if (!jmvcore::isError(res_asym)) {
-                            if(is.nan(res_asym$parameter)){
-                                res_asym$p.value <-NaN
-                            }
-
-                            ests_asym <- revert(res_asym$estimate, res_asym$conf.int[1], res_asym$conf.int[2], HA)
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[asym]" = res_asym$statistic,
-                                "df[asym]" = res_asym$parameter,
-                                "p[asym]" = res_asym$p.value,
-                                "relEff[asym]" = ests_asym$estimate,
-                                "cil[asym]" = ests_asym$cil,
-                                "ciu[asym]" = ests_asym$ciu
-                            ))
-                        } else {
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[asym]" = NaN,
-                                "df[asym]" = "",
-                                "p[asym]" = "",
-                                "cil[asym]" = "",
-                                "ciu[asym]" = ""
-                            ))
-
-                            message <- jmvcore::extractErrorMessage(res_asym)
-                            if (message == "not enough observations") {
-                                message <- ("One or both groups do not contain enough observations")
-                            }
-
-                            ttestTable$addFootnote(rowKey = depName, "stat[asym]", message)
-                        }
+                        run_analysis("asym", dataTTest)
                     }
 
                     if (self$options$randomPerm) {
-                        res_random <- check_error(dataTTest)
-                        if (!jmvcore::isError(res_random)) {
-                            res_random <- try(suppressWarnings(
-                                nparcomp::npar.t.test(dep ~ group,
-                                                      data = dataTTest,
-                                                      alternative = HA,
-                                                      conf.level = confInt,
-                                                      method = "permu",
-                                                      info = FALSE, nperm = self$options$n_perm
-                                )
-                            ), silent = TRUE)
-                        }
-
-                        if (!jmvcore::isError(res_random)) {
-                            res_sel <- as.numeric(res_random$Analysis["id", ])
-                            names(res_sel) <- colnames(res_random$Analysis)
-                            ests_random <- revert(res_sel["Estimator"], res_sel["Lower"], res_sel["Upper"], HA)
-
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[randomPerm]" = res_sel["Statistic"],
-                                "df[randomPerm]" = "",
-                                "p[randomPerm]" = res_sel["p.value"],
-                                "relEff[randomPerm]" = ests_random$estimate,
-                                "cil[randomPerm]" = ests_random$cil,
-                                "ciu[randomPerm]" = ests_random$ciu
-                            ))
-                        } else {
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[randomPerm]" = NaN,
-                                "df[randomPerm]" = "",
-                                "p[randomPerm]" = "",
-                                "cil[randomPerm]" = "",
-                                "ciu[randomPerm]" = ""
-                            ))
-
-                            message <- jmvcore::extractErrorMessage(res_random)
-                            if (message == "grouping factor must have exactly 2 levels") {
-                                message <- ("One or both groups do not contain enough observations")
-                            } else if (message == "not enough observations") {
-                                message <- ("One or both groups do not contain enough observations")
-                            } else if (message == "cannot compute confidence interval when all observations are tied") {
-                                message <- ("All observations are tied")
-                            }
-
-                            ttestTable$addFootnote(rowKey = depName, "stat[randomPerm]", message)
-                        }
+                        run_analysis("randomPerm", dataTTest)
                     }
 
                     if (self$options$fullPerm) {
-                        res_full <- check_error(dataTTest, check_n = TRUE)
-                        if (!jmvcore::isError(res_full)) {
-                            res_full <- try(suppressWarnings(
-                                brunnermunzel::brunnermunzel.permutation.test(dep ~ group,
-                                                                              data = dataTTest,
-                                                                              alternative = HA,
-                                                                              alpha = 1 - confInt, force = TRUE
-                                )
-                            ), silent = TRUE)
-                        }
-
-
-                        if (!jmvcore::isError(res_full)) {
-                            ests_full <- revert(res_full$estimate, HA = HA)
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[fullPerm]" = res_full$statistic,
-                                "df[fullPerm]" = res_full$parameter,
-                                "p[fullPerm]" = res_full$p.value,
-                                "relEff[fullPerm]" = ests_full$estimate
-                            ))
-                        } else {
-                            ttestTable$setRow(rowKey = depName, list(
-                                "stat[fullPerm]" = NaN,
-                                "df[fullPerm]" = "",
-                                "p[fullPerm]" = "",
-                                "cil[fullPerm]" = "",
-                                "ciu[fullPerm]" = ""
-                            ))
-
-                            message <- jmvcore::extractErrorMessage(res_full)
-                            if (message == "grouping factor must have exactly 2 levels") {
-                                message <- ("One or both groups do not contain enough observations")
-                            } else if (message == "not enough observations") {
-                                message <- ("One or both groups do not contain enough observations")
-                            } else if (message == "cannot compute confidence interval when all observations are tied") {
-                                message <- ("All observations are tied")
-                            } else {
-                                message <- (message)
-                            }
-
-                            ttestTable$addFootnote(rowKey = depName, "stat[fullPerm]", message)
-                        }
+                        run_analysis("fullPerm", dataTTest)
                     }
                 }
             },
@@ -250,14 +269,11 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                 table <- self$results$bmtest
 
                 ciTitleString <- "{ciWidth}% Confidence Interval"
-
                 ciTitle <- jmvcore::format(ciTitleString, ciWidth = self$options$ciWidth)
                 table$getColumn("ciu[asym]")$setSuperTitle(ciTitle)
                 table$getColumn("cil[asym]")$setSuperTitle(ciTitle)
                 table$getColumn("ciu[randomPerm]")$setSuperTitle(ciTitle)
                 table$getColumn("cil[randomPerm]")$setSuperTitle(ciTitle)
-
-
                 table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
                 table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
                 table$getColumn("relEff[fullPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
@@ -269,6 +285,10 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                 } else {
                     table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
                 }
+            },
+
+            .formula=function() {
+                jmvcore:::composeFormula(self$options$vars, self$options$group)
             }
         )
     )
