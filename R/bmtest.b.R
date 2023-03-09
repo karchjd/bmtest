@@ -5,7 +5,42 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
         "bmtestClass",
         inherit = bmtestBase,
         private = list(
+            .init = function() {
+
+                if ( is.null(self$options$group) )
+                    return()
+
+                groups <- base::levels(self$data[[self$options$group]])
+
+                if (length(groups) != 2)
+                    groups <- c("Group 1", "Group 2")
+
+                table <- self$results$bmtest
+
+                ciTitleString <- "{ciWidth}% Confidence Interval"
+                ciTitle <- jmvcore::format(ciTitleString, ciWidth = self$options$ciWidth)
+                table$getColumn("ciu[asym]")$setSuperTitle(ciTitle)
+                table$getColumn("cil[asym]")$setSuperTitle(ciTitle)
+                table$getColumn("ciu[randomPerm]")$setSuperTitle(ciTitle)
+                table$getColumn("cil[randomPerm]")$setSuperTitle(ciTitle)
+                table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+                table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+                table$getColumn("relEff[fullPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+
+                if (self$options$hypothesis == "oneGreater") {
+                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
+                } else if (self$options$hypothesis == "twoGreater") {
+                    table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
+                } else {
+                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
+                }
+            },
+
             .run = function() {
+
+                if ( is.null(self$options$group ) || length(self$options$vars) == 0)
+                    return()
+
                 ## private functions and constants
                 check_parameters <- function(parameters){
                     if(parameters$ci && !parameters$relEff){
@@ -254,38 +289,7 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                     }
                 }
             },
-            .init = function() {
-                hypothesis <- self$options$hypothesis
-                groupName <- self$options$group
 
-                groups <- NULL
-                if (!is.null(groupName)) {
-                    groups <- base::levels(self$data[[groupName]])
-                }
-                if (length(groups) != 2) {
-                    groups <- c("Group 1", "Group 2")
-                }
-
-                table <- self$results$bmtest
-
-                ciTitleString <- "{ciWidth}% Confidence Interval"
-                ciTitle <- jmvcore::format(ciTitleString, ciWidth = self$options$ciWidth)
-                table$getColumn("ciu[asym]")$setSuperTitle(ciTitle)
-                table$getColumn("cil[asym]")$setSuperTitle(ciTitle)
-                table$getColumn("ciu[randomPerm]")$setSuperTitle(ciTitle)
-                table$getColumn("cil[randomPerm]")$setSuperTitle(ciTitle)
-                table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-                table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-                table$getColumn("relEff[fullPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-
-                if (hypothesis == "oneGreater") {
-                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
-                } else if (hypothesis == "twoGreater") {
-                    table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
-                } else {
-                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
-                }
-            },
 
             .formula=function() {
                 jmvcore:::composeFormula(self$options$vars, self$options$group)
