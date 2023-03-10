@@ -210,11 +210,6 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `type`="number", 
                         `visible`="(randomPerm)"),
                     list(
-                        `name`="df[randomPerm]", 
-                        `title`="df", 
-                        `type`="number", 
-                        `visible`="(randomPerm)"),
-                    list(
                         `name`="p[randomPerm]", 
                         `title`="p", 
                         `type`="number", 
@@ -244,11 +239,6 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     list(
                         `name`="stat[fullPerm]", 
                         `title`="Statistic", 
-                        `type`="number", 
-                        `visible`="(fullPerm)"),
-                    list(
-                        `name`="df[fullPerm]", 
-                        `title`="df", 
                         `type`="number", 
                         `visible`="(fullPerm)"),
                     list(

@@ -83,12 +83,6 @@ items:
           visible: (randomPerm)
 
 
-        - name: df[randomPerm]
-          title: df
-          type: number
-          visible: (randomPerm)
-
-
         - name: p[randomPerm]
           title: p
           type: number
@@ -120,12 +114,6 @@ items:
 
         - name: stat[fullPerm]
           title: Statistic
-          type: number
-          visible: (fullPerm)
-
-
-        - name: df[fullPerm]
-          title: df
           type: number
           visible: (fullPerm)
 

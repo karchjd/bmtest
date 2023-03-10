@@ -175,7 +175,7 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         extract_res <- function(res){
                             res_sel <- as.numeric(res$Analysis["id", ])
                             names(res_sel) <- colnames(res$Analysis)
-                            list(statistic = res_sel["Statistic"], parameter = "",
+                            list(statistic = res_sel["Statistic"],
                                  p.value = res_sel["p.value"], estimate = res_sel["Estimator"],
                                  conf.int = c(res_sel["Lower"], res_sel["Upper"]))
                         }
@@ -202,7 +202,6 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         suffix <- "[fullPerm]"
                         full_name <- "All Permutations"
                         extract_res <- function(res){
-                            res$parameter = ""
                             res
                         }
                         check_n <- TRUE
@@ -220,7 +219,9 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                                         suffix)
                     if (!jmvcore::isError(res)) {
                         res <- extract_res(res)
-                        res  <- check_error_res(res)
+                        if(type == "asym"){
+                            res  <- check_error_res(res)
+                        }
                     }
                     if (!jmvcore::isError(res)) {
                         ests <- revert(res$estimate, res$conf.int[1], res$conf.int[2], HA)
