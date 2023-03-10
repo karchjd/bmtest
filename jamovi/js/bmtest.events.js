@@ -20,8 +20,6 @@ const updateUI = function(ui, context) {
     let randomPermNames = ui.randomPerm.value();
 
     if ( ! asymNames && ! randomPermNames ) {
-        ui.relEff.setValue(false)
-        //ui.relEff.setPropertyValue('enable', false);
         ui.ci.setValue(false)
     }
     else {

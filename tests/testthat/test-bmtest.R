@@ -171,8 +171,6 @@ testthat::test_that('Formula Interface', {
         `df[fullPerm]` = NA,
         `p[fullPerm]` = 1.000000000,
         `relEff[fullPerm]` = 0.500,
-        `cil[fullPerm]` = NA,
-        `ciu[fullPerm]` = NA,
         check.names = FALSE
     )
     testthat::expect_equal(res_table, expected_table, tolerance = 0.0001, ignore_attr = TRUE)

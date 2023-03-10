@@ -70,7 +70,7 @@ children:
                 label: Group 1 > Group 2
               - type: RadioButton
                 name: hypothesis_twoGreater
-                optionName: hypothesis 
+                optionName: hypothesis
                 optionPart: twoGreater
                 label: Group 1 < Group 2
           - type: Label
@@ -104,7 +104,7 @@ children:
                       - type: CheckBox
                         name: ci
                         label: Confidence interval
-                        enable: (relEff)
+                        enable: (relEff && (asym || randomPerm))
                         style: inline
                         verticalAlignment: center
                         children:
