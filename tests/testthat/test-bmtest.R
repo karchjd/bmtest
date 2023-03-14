@@ -7,20 +7,20 @@ testthat::test_that('All computations give correct results', {
     )
 
     set.seed(123)
-    testthat::expect_warning(
-        res <- bmtest(
-            df,
-            vars = c("y1", "y2"),
-            group = "g",
-            relEff = TRUE,
-            ci = TRUE,
-            ciWidth = 95,
-            fullPerm = TRUE,
-            randomPerm = TRUE,
-            asym = TRUE,
-            hypothesis = "different",
 
-        ))
+    testthat::expect_warning(res <- bmtest(
+        df,
+        vars = c("y1", "y2"),
+        group = "g",
+        relEff = TRUE,
+        ci = TRUE,
+        ciWidth = 95,
+        fullPerm = TRUE,
+        randomPerm = TRUE,
+        asym = TRUE,
+        hypothesis = "different",
+
+    ))
 
     # Test main t-test table
     res_table <- res$bmtest$asDF
@@ -30,21 +30,21 @@ testthat::test_that('All computations give correct results', {
         `stat[asym]` = c(0, 6.363961),
         `df[asym]` = c(18, 18),
         `p[asym]` = c(1, 5.394655e-06),
-        `relEff[asym]` = c(0.500, 0.125),
-        `cil[asym]` = c(0.252403963, 0.001201982),
-        `ciu[asym]` = c(0.747596, 0.248798),
+        `relEff[asym]` = c(0.500, 0.875),
+        `cil[asym]` = c(0.252403963, 0.751202),
+        `ciu[asym]` = c(0.747596, 0.998798),
         `test[randomPerm]` = c("Random Permutations", "Random Permutations"),
         `stat[randomPerm]` = c(0, 6.364),
         `df[randomPerm]` = c(NA, NA),
         `p[randomPerm]` = c(0.654, 0.002),
-        `relEff[randomPerm]` = c(0.5, 0.125),
-        `cil[randomPerm]` = c(0.282, 0),
-        `ciu[randomPerm]` = c(0.718, 0.25),
+        `relEff[randomPerm]` = c(0.5, 0.875),
+        `cil[randomPerm]` = c(0.282, .75),
+        `ciu[randomPerm]` = c(0.718, 1),
         `test[fullPerm]` = c("All Permutations", "All Permutations"),
         `stat[fullPerm]` = c(0, 6.363961),
         `df[fullPerm]` = c(NA, NA),
         `p[fullPerm]` = c(1, 0.002727922),
-        `relEff[fullPerm]` = c(0.5, 0.125),
+        `relEff[fullPerm]` = c(0.500, 0.875),
         `cil[fullPerm]` = c(NA, NA),
         `ciu[fullPerm]` = c(NA, NA),
         check.names = FALSE

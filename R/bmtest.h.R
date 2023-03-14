@@ -14,7 +14,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             ciWidth = 95,
             miss = "perAnalysis",
             asym = TRUE,
-            randomPerm = TRUE,
+            randomPerm = FALSE,
             fullPerm = FALSE,
             n_perm = 10000, ...) {
 
@@ -76,7 +76,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..randomPerm <- jmvcore::OptionBool$new(
                 "randomPerm",
                 randomPerm,
-                default=TRUE)
+                default=FALSE)
             private$..fullPerm <- jmvcore::OptionBool$new(
                 "fullPerm",
                 fullPerm,
@@ -342,7 +342,7 @@ bmtest <- function(
     ciWidth = 95,
     miss = "perAnalysis",
     asym = TRUE,
-    randomPerm = TRUE,
+    randomPerm = FALSE,
     fullPerm = FALSE,
     n_perm = 10000,
     formula) {

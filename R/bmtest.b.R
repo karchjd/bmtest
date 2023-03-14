@@ -23,16 +23,16 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                 table$getColumn("cil[asym]")$setSuperTitle(ciTitle)
                 table$getColumn("ciu[randomPerm]")$setSuperTitle(ciTitle)
                 table$getColumn("cil[randomPerm]")$setSuperTitle(ciTitle)
-                table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-                table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
-                table$getColumn("relEff[fullPerm]")$setTitle(jmvcore::format("P({} > {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+                table$getColumn("relEff[asym]")$setTitle(jmvcore::format("P({} < {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+                table$getColumn("relEff[randomPerm]")$setTitle(jmvcore::format("P({} < {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
+                table$getColumn("relEff[fullPerm]")$setTitle(jmvcore::format("P({} < {}) + \u00BDP({} = {})", groups[1], groups[2], groups[1], groups[2]))
 
                 if (self$options$hypothesis == "oneGreater") {
-                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
+                    table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) < \u00BD", groups[1], groups[2], groups[1], groups[2]))
                 } else if (self$options$hypothesis == "twoGreater") {
                     table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) > \u00BD", groups[1], groups[2], groups[1], groups[2]))
                 } else {
-                    table$setNote("hyp", jmvcore::format("H\u2090 P({} > {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
+                    table$setNote("hyp", jmvcore::format("H\u2090 P({} < {}) + \u00BDP({} = {}) \u2260 \u00BD", groups[1], groups[2], groups[1], groups[2]))
                 }
             },
 
@@ -52,19 +52,6 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                     }
                 }
 
-                revert <- function(estimate, cil = NULL, ciu = NULL, HA) {
-                    if (HA == "greater" || HA == "two.sided") {
-                        estimate <- 1 - estimate
-                        if (!is.null(cil)) {
-                            cil_orig <- cil
-                            cil <- 1 - ciu
-                            ciu <- 1 - cil_orig
-                        }else{
-                            cil <- ciu <- ""
-                        }
-                    }
-                    return(list(estimate = estimate, cil = cil, ciu = ciu))
-                }
 
                 check_error <- function(dataTTest, check_n = FALSE) {
                     if (is.factor(dataTTest$dep)) {
@@ -224,9 +211,8 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         }
                     }
                     if (!jmvcore::isError(res)) {
-                        ests <- revert(res$estimate, res$conf.int[1], res$conf.int[2], HA)
                         results <- list(res$statistic, res$parameter, res$p.value,
-                                             ests$estimate, ests$cil, ests$ciu)
+                                        res$estimate, res$conf.int[1], res$conf.int[2])
 
                         results_list <- setNames(results, res_names)
                         ttestTable$setRow(rowKey = depName, results_list)
