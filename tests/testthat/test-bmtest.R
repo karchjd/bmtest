@@ -20,7 +20,7 @@ testthat::test_that('All computations give correct results', {
         asym = TRUE,
         hypothesis = "different",
 
-    ))
+    ), "Confidence intervals not supported for full permutation approach.")
 
     # Test main t-test table
     res_table <- res$bmtest$asDF
@@ -105,7 +105,7 @@ testthat::test_that('Warning is thrown if number full permutation too high', {
     )
 
     testthat::expect_warning(
-        bmtest(df, vars = "dep", group = "group", fullPerm = TRUE))
+        bmtest(df, vars = "dep", group = "group", fullPerm = TRUE), "For Analysis, Dependent Variable: dep, Test Type: All Permutations: Number of needed permutations too large to be computationally feasible. Use one of the other two options.")
 
     res <- jmv::ttestIS(df, vars = "dep", group = "group")
 })
@@ -117,7 +117,7 @@ testthat::test_that('Warning is thrown if ci true but not relEff', {
         check.names = FALSE
     )
     testthat::expect_warning(
-        bmtest(df, vars = "y1", group = "g", ci = TRUE))
+        bmtest(df, vars = "y1", group = "g", ci = TRUE), "relEff parameter must also be TRUE to get confidence intervals")
 })
 
 testthat::test_that('Warning is thrown if ci true but only fullPerm', {
@@ -127,7 +127,7 @@ testthat::test_that('Warning is thrown if ci true but only fullPerm', {
         check.names = FALSE
     )
     testthat::expect_warning(
-        bmtest(df, vars = "y1", group = "g", fullPerm = TRUE, asym = FALSE, ci = TRUE, relEff = TRUE))
+        bmtest(df, vars = "y1", group = "g", fullPerm = TRUE, asym = FALSE, ci = TRUE, relEff = TRUE), "Confidence intervals not supported for full permutation approach.")
 })
 
 
@@ -138,7 +138,7 @@ testthat::test_that('Warning is thrown if relative effect 1 or 0', {
         check.names = FALSE
     )
     testthat::expect_warning(
-        bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE))
+        bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE), "For Analysis, Dependent Variable: y1, Test Type: Asymptotic: Results cannot be trusted. Likely caused by an estimated relative effect of very close to 1 or 0.*")
 })
 
 testthat::test_that('Formula Interface', {
