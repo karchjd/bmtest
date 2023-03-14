@@ -146,7 +146,7 @@ options:
     - name: randomPerm
       title: Random Permutation Test
       type: Bool
-      default: true
+      default: false
       description:
           ui: >
             Compute p values and confidence intervals using random permutations
