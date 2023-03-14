@@ -315,9 +315,9 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param asym \code{TRUE} (default) or \code{FALSE}, Compute p values and
 #'   confidence intervals using t-approximation
 #' @param randomPerm \code{TRUE} (default) or \code{FALSE}, Compute p values
-#'   and confidence intervals using random permutation
+#'   and confidence intervals using random permutations
 #' @param fullPerm \code{TRUE} (default) or \code{FALSE}, Compute p values and
-#'   confidence intervals using ALL permutation
+#'   confidence intervals using ALL permutations
 #' @param n_perm a integer (default 10000), the number of random permutations
 #' @param formula (optional) the formula to use, see the examples
 #' @return A results object containing:

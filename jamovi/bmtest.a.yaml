@@ -151,7 +151,7 @@ options:
           ui: >
             Compute p values and confidence intervals using random permutations
           R: >
-            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using random permutation
+            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using random permutations
     - name: fullPerm
       title: Full Permutation Test
       type: Bool
@@ -160,7 +160,7 @@ options:
           ui: >
             Compute p values and confidence intervals using ALL permutations
           R: >
-            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using ALL permutation
+            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using ALL permutations
     - name: n_perm
       title: Number of Permutations
       type: Number
