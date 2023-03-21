@@ -174,11 +174,11 @@ options:
     - name: etl
       title: Elapsed time limit (seconds)
       type: Number
-      min: 5
+      min: 1
       default: 60
       description:
           ui: >
             limit on elapsed cpu time in seconds
           R: >
-            a integer (default 60), limit on elapsed cpu time in seconds            
+            a integer (default 60), limit on elapsed cpu time in seconds
 ...
