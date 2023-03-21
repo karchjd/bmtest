@@ -22,10 +22,6 @@ const updateUI = function(ui, context) {
     if ( ! asymNames && ! randomPermNames ) {
         ui.ci.setValue(false)
     }
-    else {
-        // ui.relEff.setPropertyValue('enable', true);
-    }
-
 };
 
 module.exports = events;

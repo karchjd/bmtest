@@ -1,0 +1,512 @@
+jmvtools::install()
+options(jamovi_home='C:\\Program Files\\jamovi 2.2.5.0')
+jmvtools::install()
+setwd("C:/Users/karchjd/Dropbox/projects/current/BM_jamovi/bmtest")
+jmvtools::install()
+jmvtools::install()
+jmvtools::install()
+library(bmtest)
+jmvtools::install()
+jmvtools::install()
+jmvtools::install()
+jmvtools::install()
+options(jamovi_home='C:\\Program Files\\jamovi 2.2.5.0')
+jmvtools::install()
+jmvtools::install()
+jmvtools::install()
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+g = rep(letters[1:2], each = 10)
+)
+set.seed(123)
+testthat::expect_warning(res <- bmtest(data = df, formula = y1 ~g, randomPerm = TRUE, fullPerm = TRUE, relEff = TRUE, ci = TRUE))
+res_table <- res$bmtest$asDF
+res_table
+expected_table <- data.frame(
+var = "y1",
+`test[asym]` = "t-Approximation",
+`stat[asym]` = 0,
+`df[asym]` = 18,
+`p[asym]` = 1,
+`relEff[asym]` = 0.500,
+`cil[asym]` = 0.252403963,
+`ciu[asym]` = 0.747596,
+`test[randomPerm]` = "Random Permutations",
+`stat[randomPerm]` = 0.000,
+`df[randomPerm]` = NA,
+`p[randomPerm]` = 0.654,
+`relEff[randomPerm]` = 0.500,
+`cil[randomPerm]` = 0.282,
+`ciu[randomPerm]` = 0.718,
+`test[fullPerm]` = "All Permutations",
+`stat[fullPerm]` = 0.000000,
+`df[fullPerm]` = NA,
+`p[fullPerm]` = 1.000000000,
+`relEff[fullPerm]` = 0.500,
+`cil[fullPerm]` = NA,
+`ciu[fullPerm]` = NA,
+check.names = FALSE
+)
+expected_table
+jmvtools::install()
+library(bmtest)
+jmvtools::install()
+jmvtools::install()
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+set.seed(123)
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+type
+results_list
+library(bmtest)
+res_table <- res$bmtest$asDF
+res_table
+res_table <- res$bmtest$asDF
+res
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+g = rep(letters[1:2], each = 10)
+)
+set.seed(123)
+testthat::expect_warning(res <- bmtest(data = df, formula = y1 ~g, randomPerm = TRUE, fullPerm = TRUE, relEff = TRUE, ci = TRUE))
+res
+res_table <- res$bmtest$asDF
+res_table
+install.packages("jmvtools")
+sessionInfo()
+jmvtools::install()
+install.packages("jmvtools")
+install.packages('jmvtools', repos='https://repo.jamovi.org')
+install.packages("jmvcore")
+install.packages('jmvtools', repos='https://repo.jamovi.org')
+jmvtools::install()
+options(jamovi_home='C:\\Program Files\\jamovi 2.2.5.0')
+jmvtools::install()
+devtools::document()
+install.packages("devtools")
+devtools::document()
+library(bmtest)
+?bmtest
+jmvtools::install()
+devtools::document()
+library(bmtest)
+devtools::document()
+jmvtools::install()
+library(bmtest)
+jmvtools::install()
+jmvtools::install()
+devtools::document()
+jmvtools::install()
+library(bmtest)
+jmvtools::install()
+t.test(rnorm(10), rnorm(10))
+?wilcox.test
+install.packages("nparcomp")
+library(nparcomp)
+?npar.t.test
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "two.sided", info=FALSE)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+a
+print(a)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less")
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less")
+a$Analysis
+install.packages("jmv")
+install.packages("jmv")
+install.packages("jmv")
+library(bmtest)
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+set.seed(123)
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+# Test main t-test table
+res_table <- res$bmtest$asDF
+expected_table <- data.frame(
+var = c("y1", "y2"),
+`test[asym]` = c("t-Approximation", "t-Approximation"),
+`stat[asym]` = c(0, 6.363961),
+`df[asym]` = c(18, 18),
+`p[asym]` = c(1, 5.394655e-06),
+`relEff[asym]` = c(0.500, 0.125),
+`cil[asym]` = c(0.252403963, 0.001201982),
+`ciu[asym]` = c(0.747596, 0.248798),
+`test[randomPerm]` = c("Random Permutations", "Random Permutations"),
+`stat[randomPerm]` = c(0, 6.364),
+`df[randomPerm]` = c(NA, NA),
+`p[randomPerm]` = c(0.654, 0.002),
+`relEff[randomPerm]` = c(0.5, 0.125),
+`cil[randomPerm]` = c(0.282, 0),
+`ciu[randomPerm]` = c(0.718, 0.25),
+`test[fullPerm]` = c("All Permutations", "All Permutations"),
+`stat[fullPerm]` = c(0, 6.363961),
+`df[fullPerm]` = c(NA, NA),
+`p[fullPerm]` = c(1, 0.002727922),
+`relEff[fullPerm]` = c(0.5, 0.125),
+`cil[fullPerm]` = c(NA, NA),
+`ciu[fullPerm]` = c(NA, NA),
+check.names = FALSE
+)
+expected_table <- expected_table[,names(res_table)]
+rownames(expected_table) <- c("\"dep 1\"", "\"dep 2\"")
+testthat::expect_equal(res_table, expected_table, tolerance = 0.0001, ignore_attr = TRUE)
+res_table
+expected_table
+expected_table[[6]]
+res_table[[6]]
+res_table[[7]]
+expected_table[[7]]
+res_table[[8]]
+res_table[[12]]
+library(bmtest)
+jmvtools::install()
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+library(nparcomp)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "t.app",
+alternative = "less", info=FALSE)
+a$Analysis
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "permu",
+alternative = "less", info=FALSE)
+a
+a$Analysis
+?npar.t.test
+id
+library(bmtest)
+data(impla)
+a<-npar.t.test(impla~group, data = impla, method = "permu",
+alternative = "less", info=FALSE)
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), each= 10) + rnorm(20) * 0.001,
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE)
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE)
+npar.t.test(y1 ~ g, df)
+npar.t.test(y1 ~ g, df)
+a <- npar.t.test(y1 ~ g, df)
+a$Analysis
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+# Test main t-test table
+res_table <- res$bmtest$asDF
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+set.seed(123)
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+res
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+set.seed(123)
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+res
+res$Analysis
+res
+extract_res()
+extract_res
+res$statistic
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+res
+res$Analysis
+res$Analysis["id",]
+res$Analysis[1,]
+library(bmtest)
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+)
+res
+library(bmtest)
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+)
+res$Analysis
+a <- npar.t.test(y1 ~ g, df)
+a$Analysis
+a$Analysis["p(a,b)"]
+a$Analysis["p(a,b)",]
+a$Analysis[1,]
+library(bmtest)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+testthat::expect_warning(
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+res
+a
+a$Analysis
+a$text.Output
+a
+a$AsyMethod
+a$Info
+a$Analysis
+a$input
+a$cmpid
+a$AsyMethod
+install.packages(lawstat)
+install.packages("lawstat")
+library(lawstat)
+brunner.munzel.test()
+brunner.munzel.test(rnorm(10), rnorm(10))
+?brunner.munzel.test
+brunner.munzel.test(rnorm(10), rnorm(10), alternative = "greater")
+brunner.munzel.test(rnorm(10), rnorm(10), alternative = "less")
+library(WRS2)
+library(brunnermunzel)
+brunnermunzel.test(c(1,2,3), c(1,4,5))
+brunnermunzel.test(c(1,2,3), c(1,4,5), alternative = "greater")
+brunnermunzel.test(c(1,2,3), c(1,4,5), alternative = "different")
+brunnermunzel.test(c(1,2,3), c(1,4,5), alternative = "two.sied")
+brunnermunzel.test(c(1,2,3), c(1,4,5), alternative = "two.sided")
+library(bmtest)
+library(bmtest)
+library(bmtest)
+library(bmtest)
+install.packages("testthat")
+library(bmtest)
+install.packages("jmv")
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+testthat::expect_warning(res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+))
+res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+)
+library(testthat)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+library(bmtest)
+set.seed(123)
+testthat::expect_warning(res <- bmtest(
+df,
+vars = c("y1", "y2"),
+group = "g",
+relEff = TRUE,
+ci = TRUE,
+ciWidth = 95,
+fullPerm = TRUE,
+randomPerm = TRUE,
+asym = TRUE,
+hypothesis = "different",
+), "Confidence intervals not supported for full permutation approach.")
+df <- data.frame(
+dep = rnorm(100),
+group = rep(letters[1:2], each = 50),
+check.names = FALSE
+)
+bmtest(df, vars = "dep", group = "group", fullPerm = TRUE)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+bmtest(df, vars = "y1", group = "g", ci = TRUE)
+df <- data.frame(
+y1 = rep(c(0,1), 10),
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+bmtest(df, vars = "y1", group = "g", fullPerm = TRUE, asym = FALSE, ci = TRUE, relEff = TRUE)
+df <- data.frame(
+y1 = rep(c(0,1), each= 10) + rnorm(20) * 0.001,
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+testthat::expect_warning(
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE))
+df <- data.frame(
+y1 = rep(c(0,1), each= 10) + rnorm(20) * 0.001,
+g = rep(letters[1:2], each = 10),
+check.names = FALSE
+)
+testthat::expect_warning(
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE))
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE)
+?testthat::expect_warning
+bmtest(df, vars = "y1", group = "g", ci = TRUE, relEff = TRUE)
+?nparcomp::npar.t.test
+library(haven)
+ZA5232_v3_0_0 <- read_sav("C:/Users/karchjd/OneDrive - Universiteit Leiden/work/downloads/ZA5232_v3-0-0.sav")
+View(ZA5232_v3_0_0)
+nparcomp::npar.t.test(v187 ~ v218, data = ZA5232_v3_0_0)
+nparcomp::npar.t.test(v187 ~ v218, data = ZA5232_v3_0_0, nperm = 100)
+nparcomp::npar.t.test(v187 ~ v218, data = ZA5232_v3_0_0, nperm = 10)
+library(nparcomp)
+?npar.t.test
+nparcomp::npar.t.test(v187 ~ v218, data = ZA5232_v3_0_0, nperm = 1)
+mi_kde_test(rnorm(100), rnorm(100))
+source("C:/Users/karchjd/OneDrive - Universiteit Leiden/work/downloads/new_tests/mi_kde_test.R")
+mi_kde_test(rnorm(100), rnorm(100))
+mi_kde_test(rnorm(100), rnorm(100))
+mi_kde_test(rnorm(100), rnorm(100))
+?mpmi
+library(mpmi)
+?mpmi
+?cminjk
+mi_kde_test(rnorm(100), rnorm(100))
+mi_kde_test(rnorm(10000), rnorm(10000))
+?factor
