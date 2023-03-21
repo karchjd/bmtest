@@ -50,6 +50,11 @@ children:
                     label: Number Permutations
                     format: number
                     enable: (randomPerm)
+                  - type: TextBox
+                    name: etl
+                    label: Elapsed time limit (seconds)
+                    format: number
+                    enable: (randomPerm)    
               - type: CheckBox
                 name: fullPerm
 

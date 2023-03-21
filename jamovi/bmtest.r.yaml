@@ -15,6 +15,7 @@ items:
         - miss
         - ciWidth
         - n_perm
+        - etl
 
       columns:
         - name: var

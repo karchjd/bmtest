@@ -171,4 +171,14 @@ options:
             the number of random permutations
           R: >
             a integer (default 10000), the number of random permutations
+    - name: etl
+      title: Elapsed time limit (seconds)
+      type: Number
+      min: 5
+      default: 60
+      description:
+          ui: >
+            limit on elapsed cpu time in seconds
+          R: >
+            a integer (default 60), limit on elapsed cpu time in seconds            
 ...
