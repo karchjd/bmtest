@@ -152,16 +152,17 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         check_n <- FALSE
                     }else if(type == "randomPerm"){
                         run_test <- function(dataTTest, HA, confInt){
-                            {
-                                base::setTimeLimit(elapsed = self$options$etl, transient = TRUE)
-                                nparcomp::npar.t.test(dep ~ group,
-                                                      data = dataTTest,
-                                                      alternative = HA,
-                                                      conf.level = confInt,
-                                                      method = "permu",
-                                                      info = FALSE,
-                                                      nperm = self$options$n_perm)
-                            }
+
+                            R.utils::withTimeout(nparcomp::npar.t.test(dep ~ group,
+                                                                  data = dataTTest,
+                                                                  alternative = HA,
+                                                                  conf.level = confInt,
+                                                                  method = "permu",
+                                                                  info = FALSE,
+                                                                  nperm = self$options$n_perm), timeout = self$options$etl)
+
+
+
 
                         }
                         extract_res <- function(res){
@@ -178,9 +179,9 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                     } else if (type == "fullPerm"){
                         run_test <- function(dataTTest, HA, confInt){
                             res <- brunnermunzel::brunnermunzel.permutation.test(dep ~ group,
-                                                                          data = dataTTest,
-                                                                          alternative = HA,
-                                                                          alpha = 1 - confInt, force = TRUE
+                                                                                 data = dataTTest,
+                                                                                 alternative = HA,
+                                                                                 alpha = 1 - confInt, force = TRUE
                             )
                             res_tmp <- brunnermunzel::brunnermunzel.test(dep ~ group,
                                                                          data = dataTTest,

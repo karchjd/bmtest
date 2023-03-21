@@ -8,7 +8,7 @@ Description: Provides the Brunner-Munzel test in all three main variants (t-appr
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 2.3.19), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0)
+Imports: jmvcore (>= 2.3.19), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0), R.utils (>= 2.12.2)
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
