@@ -151,13 +151,31 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         full_name <- "Asymptotic"
                         check_n <- FALSE
                     }else if(type == "randomPerm"){
+                        # run_test <- function(dataTTest, HA, confInt){
+                        #     nparcomp::npar.t.test(dep ~ group,
+                        #                           data = dataTTest,
+                        #                           alternative = HA,
+                        #                           conf.level = confInt,
+                        #                           method = "permu",
+                        #                           info = FALSE, nperm = self$options$n_perm)
+                        # }
                         run_test <- function(dataTTest, HA, confInt){
-                            nparcomp::npar.t.test(dep ~ group,
-                                                  data = dataTTest,
-                                                  alternative = HA,
-                                                  conf.level = confInt,
-                                                  method = "permu",
-                                                  info = FALSE, nperm = self$options$n_perm)
+
+                            tryCatch({
+                                base::setTimeLimit(elapsed = self$options$etl, transient = TRUE)
+                                nparcomp::npar.t.test(dep ~ group,
+                                                      data = dataTTest,
+                                                      alternative = HA,
+                                                      conf.level = confInt,
+                                                      method = "permu",
+                                                      info = FALSE,
+                                                      nperm = self$options$n_perm)
+                            },
+                            error = function(e){
+                                message('Caught an error!')
+                                print(e)
+                            })
+
                         }
                         extract_res <- function(res){
                             res_sel <- as.numeric(res$Analysis["id", ])

@@ -16,7 +16,8 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             asym = TRUE,
             randomPerm = FALSE,
             fullPerm = FALSE,
-            n_perm = 10000, ...) {
+            n_perm = 10000,
+            etl = 60, ...) {
 
             super$initialize(
                 package="bmtest",
@@ -86,6 +87,11 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 n_perm,
                 min=40,
                 default=10000)
+            private$..etl <- jmvcore::OptionNumber$new(
+                "etl",
+                etl,
+                min=5,
+                default=60)
 
             self$.addOption(private$..vars)
             self$.addOption(private$..group)
@@ -98,6 +104,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..randomPerm)
             self$.addOption(private$..fullPerm)
             self$.addOption(private$..n_perm)
+            self$.addOption(private$..etl)
         }),
     active = list(
         vars = function() private$..vars$value,
@@ -110,7 +117,8 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         asym = function() private$..asym$value,
         randomPerm = function() private$..randomPerm$value,
         fullPerm = function() private$..fullPerm$value,
-        n_perm = function() private$..n_perm$value),
+        n_perm = function() private$..n_perm$value,
+        etl = function() private$..etl$value),
     private = list(
         ..vars = NA,
         ..group = NA,
@@ -122,7 +130,8 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..asym = NA,
         ..randomPerm = NA,
         ..fullPerm = NA,
-        ..n_perm = NA)
+        ..n_perm = NA,
+        ..etl = NA)
 )
 
 bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -147,110 +156,111 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "hypothesis",
                     "miss",
                     "ciWidth",
-                    "n_perm"),
+                    "n_perm",
+                    "etl"),
                 columns=list(
                     list(
-                        `name`="var", 
-                        `title`="", 
-                        `content`="($key)", 
-                        `type`="text", 
+                        `name`="var",
+                        `title`="",
+                        `content`="($key)",
+                        `type`="text",
                         `combineBelow`=TRUE),
                     list(
-                        `name`="test[asym]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="t-Approximation", 
+                        `name`="test[asym]",
+                        `title`="",
+                        `type`="text",
+                        `content`="t-Approximation",
                         `visible`="(asym)"),
                     list(
-                        `name`="stat[asym]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[asym]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(asym)"),
                     list(
-                        `name`="df[asym]", 
-                        `title`="df", 
-                        `type`="number", 
+                        `name`="df[asym]",
+                        `title`="df",
+                        `type`="number",
                         `visible`="(asym)"),
                     list(
-                        `name`="p[asym]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[asym]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(asym)"),
                     list(
-                        `name`="relEff[asym]", 
-                        `title`="Relative Effect", 
-                        `type`="number", 
+                        `name`="relEff[asym]",
+                        `title`="Relative Effect",
+                        `type`="number",
                         `visible`="(relEff && asym)"),
                     list(
-                        `name`="cil[asym]", 
-                        `title`="Lower", 
-                        `type`="number", 
+                        `name`="cil[asym]",
+                        `title`="Lower",
+                        `type`="number",
                         `visible`="(relEff && ci && asym)"),
                     list(
-                        `name`="ciu[asym]", 
-                        `title`="Upper", 
-                        `type`="number", 
+                        `name`="ciu[asym]",
+                        `title`="Upper",
+                        `type`="number",
                         `visible`="(relEff && ci && asym)"),
                     list(
-                        `name`="var", 
-                        `title`="", 
-                        `content`="($key)", 
-                        `type`="text", 
+                        `name`="var",
+                        `title`="",
+                        `content`="($key)",
+                        `type`="text",
                         `combineBelow`=TRUE),
                     list(
-                        `name`="test[randomPerm]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="Random Permutations", 
+                        `name`="test[randomPerm]",
+                        `title`="",
+                        `type`="text",
+                        `content`="Random Permutations",
                         `visible`="(randomPerm)"),
                     list(
-                        `name`="stat[randomPerm]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[randomPerm]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(randomPerm)"),
                     list(
-                        `name`="p[randomPerm]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[randomPerm]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(randomPerm)"),
                     list(
-                        `name`="relEff[randomPerm]", 
-                        `title`="Relative Effect", 
-                        `type`="number", 
+                        `name`="relEff[randomPerm]",
+                        `title`="Relative Effect",
+                        `type`="number",
                         `visible`="(relEff && randomPerm)"),
                     list(
-                        `name`="cil[randomPerm]", 
-                        `title`="Lower", 
-                        `type`="number", 
+                        `name`="cil[randomPerm]",
+                        `title`="Lower",
+                        `type`="number",
                         `visible`="(relEff && ci && randomPerm)"),
                     list(
-                        `name`="ciu[randomPerm]", 
-                        `title`="Upper", 
-                        `type`="number", 
+                        `name`="ciu[randomPerm]",
+                        `title`="Upper",
+                        `type`="number",
                         `visible`="(relEff && ci && randomPerm)"),
                     list(
-                        `name`="test[fullPerm]", 
-                        `title`="", 
-                        `type`="text", 
-                        `content`="All Permutations", 
+                        `name`="test[fullPerm]",
+                        `title`="",
+                        `type`="text",
+                        `content`="All Permutations",
                         `visible`="(fullPerm)"),
                     list(
-                        `name`="stat[fullPerm]", 
-                        `title`="Statistic", 
-                        `type`="number", 
+                        `name`="stat[fullPerm]",
+                        `title`="Statistic",
+                        `type`="number",
                         `visible`="(fullPerm)"),
                     list(
-                        `name`="p[fullPerm]", 
-                        `title`="p", 
-                        `type`="number", 
-                        `format`="zto,pvalue", 
+                        `name`="p[fullPerm]",
+                        `title`="p",
+                        `type`="number",
+                        `format`="zto,pvalue",
                         `visible`="(fullPerm)"),
                     list(
-                        `name`="relEff[fullPerm]", 
-                        `title`="Relative Effect", 
-                        `type`="number", 
+                        `name`="relEff[fullPerm]",
+                        `title`="Relative Effect",
+                        `type`="number",
                         `visible`="(relEff && fullPerm)"))))}))
 
 bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -275,9 +285,9 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
 #' Independent Samples Brunner Munzel Test
 #'
-#' The Brunner–Munzel test for stochastic equality of two samples, which is 
+#' The Brunner–Munzel test for stochastic equality of two samples, which is
 #' also known as the Generalized Wilcoxon test.
-#' 
+#'
 #'
 #' @examples
 #' library(jmv) # to get ToothGrowth data set
@@ -319,6 +329,7 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param fullPerm \code{TRUE} (default) or \code{FALSE}, Compute p values and
 #'   confidence intervals using ALL permutations
 #' @param n_perm a integer (default 10000), the number of random permutations
+#' @param etl a integer (default 60), limit on elapsed cpu time in seconds
 #' @param formula (optional) the formula to use, see the examples
 #' @return A results object containing:
 #' \tabular{llllll}{
@@ -345,6 +356,7 @@ bmtest <- function(
     randomPerm = FALSE,
     fullPerm = FALSE,
     n_perm = 10000,
+    etl = 60,
     formula) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -386,7 +398,8 @@ bmtest <- function(
         asym = asym,
         randomPerm = randomPerm,
         fullPerm = fullPerm,
-        n_perm = n_perm)
+        n_perm = n_perm,
+        etl = etl)
 
     analysis <- bmtestClass$new(
         options = options,
