@@ -15,9 +15,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             miss = "perAnalysis",
             asym = TRUE,
             randomPerm = FALSE,
-            fullPerm = FALSE,
             n_perm = 10000,
-            etl = 60, ...) {
+            etl = 5,
+            fullPerm = FALSE, ...) {
 
             super$initialize(
                 package="bmtest",
@@ -78,10 +78,6 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "randomPerm",
                 randomPerm,
                 default=FALSE)
-            private$..fullPerm <- jmvcore::OptionBool$new(
-                "fullPerm",
-                fullPerm,
-                default=FALSE)
             private$..n_perm <- jmvcore::OptionNumber$new(
                 "n_perm",
                 n_perm,
@@ -91,7 +87,11 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "etl",
                 etl,
                 min=1,
-                default=60)
+                default=5)
+            private$..fullPerm <- jmvcore::OptionBool$new(
+                "fullPerm",
+                fullPerm,
+                default=FALSE)
 
             self$.addOption(private$..vars)
             self$.addOption(private$..group)
@@ -102,9 +102,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..miss)
             self$.addOption(private$..asym)
             self$.addOption(private$..randomPerm)
-            self$.addOption(private$..fullPerm)
             self$.addOption(private$..n_perm)
             self$.addOption(private$..etl)
+            self$.addOption(private$..fullPerm)
         }),
     active = list(
         vars = function() private$..vars$value,
@@ -116,9 +116,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         miss = function() private$..miss$value,
         asym = function() private$..asym$value,
         randomPerm = function() private$..randomPerm$value,
-        fullPerm = function() private$..fullPerm$value,
         n_perm = function() private$..n_perm$value,
-        etl = function() private$..etl$value),
+        etl = function() private$..etl$value,
+        fullPerm = function() private$..fullPerm$value),
     private = list(
         ..vars = NA,
         ..group = NA,
@@ -129,9 +129,9 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..miss = NA,
         ..asym = NA,
         ..randomPerm = NA,
-        ..fullPerm = NA,
         ..n_perm = NA,
-        ..etl = NA)
+        ..etl = NA,
+        ..fullPerm = NA)
 )
 
 bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -145,11 +145,11 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Independent Samples Brunner Munzel Test")
+                title="Brunner-Munzel Test")
             self$add(jmvcore::Table$new(
                 options=options,
                 name="bmtest",
-                title="Independent Samples Brunner Munzel Test",
+                title="Brunner-Munzel Test",
                 rows="(vars)",
                 clearWith=list(
                     "group",
@@ -169,7 +169,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="test[asym]", 
                         `title`="", 
                         `type`="text", 
-                        `content`="t-Approximation", 
+                        `content`="Asymptotic", 
                         `visible`="(asym)"),
                     list(
                         `name`="stat[asym]", 
@@ -212,7 +212,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="test[randomPerm]", 
                         `title`="", 
                         `type`="text", 
-                        `content`="Random Permutations", 
+                        `content`="Random Permutation", 
                         `visible`="(randomPerm)"),
                     list(
                         `name`="stat[randomPerm]", 
@@ -244,7 +244,7 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="test[fullPerm]", 
                         `title`="", 
                         `type`="text", 
-                        `content`="All Permutations", 
+                        `content`="Full Permutation", 
                         `visible`="(fullPerm)"),
                     list(
                         `name`="stat[fullPerm]", 
@@ -283,25 +283,24 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 requiresMissings = FALSE)
         }))
 
-#' Independent Samples Brunner Munzel Test
+#' Brunner-Munzel Test
 #'
-#' The Brunner–Munzel test for stochastic equality of two samples, which is 
-#' also known as the Generalized Wilcoxon test.
+#' The Brunner–Munzel test for stochastic comparability of two samples.
 #' 
 #'
 #' @examples
 #' library(jmv) # to get ToothGrowth data set
 #' data('ToothGrowth')
 #' bmtest(formula = len ~ supp, data = ToothGrowth)
-#' # INDEPENDENT SAMPLES BRUNNER MUNZEL TEST
+#' # BRUNNER-MUNZEL TEST
 #' #
-#' # Independent Samples Brunner Munzel Test
-#' # ----------------------------------------------------------------
-#' #                             Statistic    df          p
-#' # ----------------------------------------------------------------
-#' #   len    t-Approximation    -1.896526    54.67724    0.0631786
-#' # ----------------------------------------------------------------
-#' #   Note. Ha P(OJ > VC) + ½P(OJ = VC) != ½
+#' # Brunner-Munzel Test
+#' # -----------------------------------------------------------
+#' #                        Statistic    df          p
+#' # -----------------------------------------------------------
+#' #   len    Asymptotic    -1.896526    54.67724    0.0631786
+#' # -----------------------------------------------------------
+#' #   Note. Ha P̂(OJ < VC) + ½P̂(OJ = VC) != ½
 #'
 #' @param data the data as a data frame
 #' @param vars the dependent variables (not necessary when using a formula,
@@ -324,12 +323,12 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   one of its entries is missing.
 #' @param asym \code{TRUE} (default) or \code{FALSE}, Compute p values and
 #'   confidence intervals using t-approximation
-#' @param randomPerm \code{TRUE} (default) or \code{FALSE}, Compute p values
+#' @param randomPerm \code{TRUE} or \code{FALSE} (default), Compute p values
 #'   and confidence intervals using random permutations
-#' @param fullPerm \code{TRUE} (default) or \code{FALSE}, Compute p values and
-#'   confidence intervals using ALL permutations
 #' @param n_perm a integer (default 10000), the number of random permutations
-#' @param etl a integer (default 60), limit on elapsed cpu time in seconds
+#' @param etl a integer (default 5), limit on elapsed cpu time in seconds
+#' @param fullPerm \code{TRUE} or \code{FALSE} (default), Compute p values and
+#'   confidence intervals using ALL permutations
 #' @param formula (optional) the formula to use, see the examples
 #' @return A results object containing:
 #' \tabular{llllll}{
@@ -354,9 +353,9 @@ bmtest <- function(
     miss = "perAnalysis",
     asym = TRUE,
     randomPerm = FALSE,
-    fullPerm = FALSE,
     n_perm = 10000,
-    etl = 60,
+    etl = 5,
+    fullPerm = FALSE,
     formula) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -397,9 +396,9 @@ bmtest <- function(
         miss = miss,
         asym = asym,
         randomPerm = randomPerm,
-        fullPerm = fullPerm,
         n_perm = n_perm,
-        etl = etl)
+        etl = etl,
+        fullPerm = fullPerm)
 
     analysis <- bmtestClass$new(
         options = options,

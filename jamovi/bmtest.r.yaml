@@ -1,11 +1,11 @@
 ---
 name: bmtest
-title: Independent Samples Brunner Munzel Test
+title: Brunner-Munzel Test
 jrs: '1.0'
 
 items:
     - name: bmtest
-      title: Independent Samples Brunner Munzel Test
+      title: Brunner-Munzel Test
       description: a table containing the Brunner Munzel Test results
       type: Table
       rows: (vars)
@@ -27,21 +27,18 @@ items:
         - name: test[asym]
           title: ''
           type: text
-          content: t-Approximation
+          content: Asymptotic
           visible: (asym)
-
 
         - name: stat[asym]
           title: Statistic
           type: number
           visible: (asym)
 
-
         - name: df[asym]
           title: df
           type: number
           visible: (asym)
-
 
         - name: p[asym]
           title: p
@@ -59,7 +56,6 @@ items:
           type: number
           visible: (relEff && ci && asym)
 
-
         - name: ciu[asym]
           title: Upper
           type: number
@@ -74,15 +70,13 @@ items:
         - name: test[randomPerm]
           title: ''
           type: text
-          content: Random Permutations
+          content: Random Permutation
           visible: (randomPerm)
-
 
         - name: stat[randomPerm]
           title: Statistic
           type: number
           visible: (randomPerm)
-
 
         - name: p[randomPerm]
           title: p
@@ -100,7 +94,6 @@ items:
           type: number
           visible: (relEff && ci && randomPerm)
 
-
         - name: ciu[randomPerm]
           title: Upper
           type: number
@@ -109,15 +102,13 @@ items:
         - name: test[fullPerm]
           title: ''
           type: text
-          content: All Permutations
+          content: Full Permutation
           visible: (fullPerm)
-
 
         - name: stat[fullPerm]
           title: Statistic
           type: number
           visible: (fullPerm)
-
 
         - name: p[fullPerm]
           title: p
@@ -129,4 +120,3 @@ items:
           title: Relative Effect
           type: number
           visible: (relEff && fullPerm)
-

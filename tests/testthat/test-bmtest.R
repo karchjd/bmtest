@@ -26,21 +26,21 @@ testthat::test_that('All computations give correct results', {
     res_table <- res$bmtest$asDF
     expected_table <- data.frame(
         var = c("y1", "y2"),
-        `test[asym]` = c("t-Approximation", "t-Approximation"),
+        `test[asym]` = c("Asymptotic", "Asymptotic"),
         `stat[asym]` = c(0, 6.363961),
         `df[asym]` = c(18, 18),
         `p[asym]` = c(1, 5.394655e-06),
         `relEff[asym]` = c(0.500, 0.875),
         `cil[asym]` = c(0.252403963, 0.751202),
         `ciu[asym]` = c(0.747596, 0.998798),
-        `test[randomPerm]` = c("Random Permutations", "Random Permutations"),
+        `test[randomPerm]` = c("Random Permutation", "Random Permutation"),
         `stat[randomPerm]` = c(0, 6.364),
         `df[randomPerm]` = c(NA, NA),
         `p[randomPerm]` = c(0.654, 0.002),
         `relEff[randomPerm]` = c(0.5, 0.875),
         `cil[randomPerm]` = c(0.282, .75),
         `ciu[randomPerm]` = c(0.718, 1),
-        `test[fullPerm]` = c("All Permutations", "All Permutations"),
+        `test[fullPerm]` = c("Full Permutation", "Full Permutation"),
         `stat[fullPerm]` = c(0, 6.363961),
         `df[fullPerm]` = c(NA, NA),
         `p[fullPerm]` = c(1, 0.002727922),
@@ -83,20 +83,6 @@ testthat::test_that('Error is thrown if dependent variable is not numeric', {
 })
 
 
-testthat::test_that('Error is thrown if dependent variable is not numeric', {
-    df <- data.frame(
-        group = c(1, 7, 1),
-        dep =  as.factor(c(1, 7, 4)),
-        stringsAsFactors = TRUE
-    )
-
-    testthat::expect_error(
-        bmtest(df, vars = "dep", group = "group"),
-        "Argument 'vars' requires a numeric variable ('dep' is not valid)",
-        fixed=TRUE
-    )
-})
-
 testthat::test_that('Warning is thrown if number full permutation too high', {
     df <- data.frame(
         dep = rnorm(100),
@@ -105,7 +91,7 @@ testthat::test_that('Warning is thrown if number full permutation too high', {
     )
 
     testthat::expect_warning(
-        bmtest(df, vars = "dep", group = "group", fullPerm = TRUE), "For Analysis, Dependent Variable: dep, Test Type: All Permutations: Number of needed permutations too large to be computationally feasible. Use one of the other two options.")
+        bmtest(df, vars = "dep", group = "group", fullPerm = TRUE), "For Analysis, Dependent Variable: dep, Test Type: Full Permutation: Number of needed permutations too large to be computationally feasible. Use one of the other two options.")
 
     res <- jmv::ttestIS(df, vars = "dep", group = "group")
 })
@@ -152,20 +138,20 @@ testthat::test_that('Formula Interface', {
     res_table <- res$bmtest$asDF
     expected_table <- data.frame(
         var = "y1",
-        `test[asym]` = "t-Approximation",
+        `test[asym]` = "Asymptotic",
         `stat[asym]` = 0,
         `df[asym]` = 18,
         `p[asym]` = 1,
         `relEff[asym]` = 0.5,
         `cil[asym]` = 0.252403963,
         `ciu[asym]` = 0.747596,
-        `test[randomPerm]` = "Random Permutations",
+        `test[randomPerm]` = "Random Permutation",
         `stat[randomPerm]` = 0,
         `p[randomPerm]` = 0.654,
         `relEff[randomPerm]` = 0.5,
         `cil[randomPerm]` = 0.282,
         `ciu[randomPerm]` = 0.718,
-        `test[fullPerm]` = "All Permutations",
+        `test[fullPerm]` = "Full Permutation",
         `stat[fullPerm]` = 0,
         `p[fullPerm]` = 1,
         `relEff[fullPerm]` = 0.5,
