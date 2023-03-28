@@ -1,4 +1,4 @@
-title: Independent Samples Brunner Munzel Test
+title: Brunner-Munzel Test
 name: bmtest
 jus: '3.0'
 stage: 0
@@ -34,7 +34,7 @@ children:
         stretchFactor: 1
         children:
           - type: Label
-            label: Test Type
+            label: Test Version
             children:
               - type: CheckBox
                 name: asym
@@ -52,16 +52,13 @@ children:
                     enable: (randomPerm)
                   - type: TextBox
                     name: etl
-                    label: Elapsed time limit (seconds)
+                    label: Time limit (seconds)
                     format: number
-                    enable: (randomPerm)    
+                    enable: (randomPerm)
               - type: CheckBox
                 name: fullPerm
-
-
-
           - type: Label
-            label: Hypothesis
+            label: Alternative Hypothesis
             children:
               - type: RadioButton
                 name: hypothesis_different
@@ -79,7 +76,7 @@ children:
                 optionPart: twoGreater
                 label: Group 1 < Group 2
           - type: Label
-            label: Missing values
+            label: Missing Values
             children:
               - type: RadioButton
                 name: miss_perAnalysis

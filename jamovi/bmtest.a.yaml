@@ -1,27 +1,27 @@
 name: bmtest
-title: Independent Samples Brunner Munzel Test
-menuGroup: BM-Test
+title: Brunner-Munzel Test
+menuGroup: BM Test
 version: '1.0.0'
 jas: '1.2'
 
 description:
     main: |
-        The Brunner–Munzel test for stochastic equality of two samples, which is also known as the Generalized Wilcoxon test.
+        The Brunner–Munzel test for stochastic comparability of two samples.
     R:
         dontrun: false
         usage: |
             library(jmv) # to get ToothGrowth data set
             data('ToothGrowth')
             bmtest(formula = len ~ supp, data = ToothGrowth)
-            # INDEPENDENT SAMPLES BRUNNER MUNZEL TEST
+            # BRUNNER-MUNZEL TEST
             #
-            # Independent Samples Brunner Munzel Test
-            # ────────────────────────────────────────────────────────────────
-            #                             Statistic    df          p
-            # ────────────────────────────────────────────────────────────────
-            #   len    t-Approximation    -1.896526    54.67724    0.0631786
-            # ────────────────────────────────────────────────────────────────
-            #   Note. Hₐ P(OJ > VC) + ½P(OJ = VC) ≠ ½
+            # Brunner-Munzel Test
+            # ───────────────────────────────────────────────────────────
+            #                        Statistic    df          p
+            # ───────────────────────────────────────────────────────────
+            #   len    Asymptotic    -1.896526    54.67724    0.0631786
+            # ───────────────────────────────────────────────────────────
+            #   Note. Hₐ P̂(OJ < VC) + ½P̂(OJ = VC) ≠ ½
 
 completeWhenFilled: true
 
@@ -54,6 +54,7 @@ options:
           R: >
             the dependent variables (not necessary when using a formula, see
             the examples)
+
     - name: group
       title: Grouping Variable
       type: Variable
@@ -68,6 +69,7 @@ options:
           R: >
             the grouping variable with two levels (not necessary when
             using a formula, see the examples)
+
     - name: hypothesis
       title: Alternative hypothesis
       type: List
@@ -87,6 +89,7 @@ options:
             `'twoGreater'`, the alternative hypothesis; group 1 different
             to group 2, group 1 greater than group 2, and group 2 greater than
             group 1 respectively
+
     - name: relEff
       title: Relative Effect
       type: Bool
@@ -117,6 +120,7 @@ options:
           R: >
             a number between 50 and 99.9 (default: 95), the width of confidence
             intervals
+
     - name: miss
       title: Missing values
       type: List
@@ -134,8 +138,9 @@ options:
             values; `'perAnalysis'` excludes missing values for individual
             dependent variables, `'listwise'` excludes a row from all
             analyses if one of its entries is missing.
+
     - name: asym
-      title: Asymptotic Test
+      title: Asymptotic
       type: Bool
       default: true
       description:
@@ -143,24 +148,16 @@ options:
             Compute p values and confidence intervals using t-approximation
           R: >
             `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using t-approximation
+
     - name: randomPerm
-      title: Random Permutation Test
+      title: Random Permutation
       type: Bool
       default: false
       description:
           ui: >
             Compute p values and confidence intervals using random permutations
           R: >
-            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using random permutations
-    - name: fullPerm
-      title: Full Permutation Test
-      type: Bool
-      default: false
-      description:
-          ui: >
-            Compute p values and confidence intervals using ALL permutations
-          R: >
-            `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using ALL permutations
+            `TRUE` or `FALSE` (default), Compute p values and confidence intervals using random permutations
     - name: n_perm
       title: Number of Permutations
       type: Number
@@ -172,13 +169,23 @@ options:
           R: >
             a integer (default 10000), the number of random permutations
     - name: etl
-      title: Elapsed time limit (seconds)
+      title: Time limit (seconds)
       type: Number
       min: 1
-      default: 60
+      default: 5
       description:
           ui: >
             limit on elapsed cpu time in seconds
           R: >
-            a integer (default 60), limit on elapsed cpu time in seconds
+            a integer (default 5), limit on elapsed cpu time in seconds
+
+    - name: fullPerm
+      title: Full Permutation
+      type: Bool
+      default: false
+      description:
+          ui: >
+            Compute p values and confidence intervals using ALL permutations
+          R: >
+            `TRUE` or `FALSE` (default), Compute p values and confidence intervals using ALL permutations
 ...

@@ -1,9 +1,9 @@
 Package: bmtest
 Type: Package
 Title: Brunner Munzel Test
-Version: 0.0.2
-Author: Julian D. Karch
-Maintainer: Julian D. Karch <j.d.karch@fsw.leidenuniv.nl>
+Version: 0.1.0
+Author: bmtestdev
+Maintainer: bmtestdev
 Description: Provides the Brunner-Munzel test in all three main variants (t-approximation, random permutations, and full permutations). Is primarily written for jamovi but is also useful as a standalone R package.
 License: GPL (>= 2)
 Encoding: UTF-8

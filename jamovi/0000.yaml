@@ -1,26 +1,25 @@
 ---
-title: Brunner Munzel Test
+title: Brunner-Munzel Test
 name: bmtest
-version: 0.0.2.9999
+version: 0.1.0
 jms: '1.0'
 authors:
-  - Julian D Karch
-maintainer: Julian D. Karch <j.d.karch@fsw.leidenuniv.nl>
-date: '2023-02-27'
+  - bmtestdev
+maintainer: bmtestdev
+date: '2023-03-25'
 type: R
 description: >-
-  Provides the Brunner-Munzel test in all three main variants (t-approximation,
-  random permutations, and full permutations). Also provides estimates of
-  associated effect sizes
+  Provides the Brunner-Munzel test in all three main variants (asymptotic,
+  random permutation, and full permutation). Also provides estimates of
+  associated relative effect size and its confidence interval.
 analyses:
-  - title: Independent Samples Brunner Munzel Test
+  - title: Brunner-Munzel Test
     name: bmtest
     ns: bmtest
-    menuGroup: BM-Test
-    menuTitle: Independent Samples Brunner Munzel Test
-    description: >
-      The Brunner–Munzel test for stochastic equality of two samples, which is
-      also known as the Generalized Wilcoxon test.
+    menuGroup: BM Test
+    menuTitle: Brunner-Munzel Test
+    description: |
+      The Brunner–Munzel test for stochastic comparability of two samples.
 usesNative: true
 minApp: 1.0.8
 

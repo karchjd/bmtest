@@ -1,4 +1,3 @@
-
 const events = {
     update: function(ui) {
         updateUI(ui, this);
@@ -11,11 +10,9 @@ const events = {
     onChange_randomPerm: function(ui) {
         updateUI(ui, this);
     }
-
 };
 
 const updateUI = function(ui, context) {
-
     let asymNames = ui.asym.value();
     let randomPermNames = ui.randomPerm.value();
 
@@ -23,5 +20,4 @@ const updateUI = function(ui, context) {
         ui.ci.setValue(false)
     }
 };
-
 module.exports = events;
