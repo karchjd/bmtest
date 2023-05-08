@@ -4,8 +4,8 @@ name: bmtest
 version: 0.1.0
 jms: '1.0'
 authors:
-  - bmtestdev
-maintainer: bmtestdev
+  - Julian Karch
+maintainer: Julian Karch <j.d.karch@fsw.leidenuniv.nl>
 date: '2023-03-25'
 type: R
 description: >-
