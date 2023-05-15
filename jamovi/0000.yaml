@@ -9,9 +9,11 @@ maintainer: Julian Karch <j.d.karch@fsw.leidenuniv.nl>
 date: '2023-03-25'
 type: R
 description: >-
-  Provides the Brunner-Munzel test in all three main variants (asymptotic,
-  random permutation, and full permutation). Also provides estimates of
-  associated relative effect size and its confidence interval.
+  The Brunner-Munzel test provides a more robust version of the
+  Wilcoxon-Mann-Whitney test. It is recommended to almost always use the
+  Brunner-Munzel test instead of the Wilcoxon-Mann-Whitney test for essentially
+  the same reasons that Welch's t-test should be used instead of Student's
+  t-test.
 analyses:
   - title: Brunner-Munzel Test
     name: bmtest

@@ -1,0 +1,13 @@
+---
+refs:
+    bmtest:
+        type: 'article'
+        author: Karch, J.D.
+        year: 2023
+        title: "bmtest: A Jamovi Module for Brunner–Munzel’s Test—A Robust Alternative to Wilcoxon–Mann–Whitney’s Test"
+        publisher: "Psych"
+        url: https://doi.org/10.3390/psych5020026
+        doi: 10.3390/psych5020026
+        volume: 5
+        pages: 127-141
+...

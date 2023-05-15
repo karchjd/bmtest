@@ -120,3 +120,6 @@ items:
           title: Relative Effect
           type: number
           visible: (relEff && fullPerm)
+
+refs:
+    - bmtest
