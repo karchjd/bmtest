@@ -5,6 +5,8 @@ jrs: '1.0'
 
 items:
     - name: bmtest
+      refs:
+        - bmtest
       title: Brunner-Munzel Test
       description: a table containing the Brunner Munzel Test results
       type: Table
@@ -121,5 +123,3 @@ items:
           type: number
           visible: (relEff && fullPerm)
 
-refs:
-    - bmtest

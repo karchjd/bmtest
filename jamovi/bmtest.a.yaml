@@ -91,7 +91,7 @@ options:
             group 1 respectively
 
     - name: relEff
-      title: Relative Effect
+      title: Relative effect
       type: Bool
       default: false
       description:
@@ -150,7 +150,7 @@ options:
             `TRUE` (default) or `FALSE`, Compute p values and confidence intervals using t-approximation
 
     - name: randomPerm
-      title: Random Permutation
+      title: Random permutation
       type: Bool
       default: false
       description:
@@ -180,7 +180,7 @@ options:
             a integer (default 5), limit on elapsed cpu time in seconds
 
     - name: fullPerm
-      title: Full Permutation
+      title: Full permutation
       type: Bool
       default: false
       description:

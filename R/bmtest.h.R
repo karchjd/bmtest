@@ -145,12 +145,12 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Brunner-Munzel Test",
-                refs=list(
-                    "bmtest"))
+                title="Brunner-Munzel Test")
             self$add(jmvcore::Table$new(
                 options=options,
                 name="bmtest",
+                refs=list(
+                    "bmtest"),
                 title="Brunner-Munzel Test",
                 rows="(vars)",
                 clearWith=list(

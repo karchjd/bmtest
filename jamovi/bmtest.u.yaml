@@ -47,7 +47,7 @@ children:
                 children:
                   - type: TextBox
                     name: n_perm
-                    label: Number Permutations
+                    label: Number permutations
                     format: number
                     enable: (randomPerm)
                   - type: TextBox
@@ -99,7 +99,7 @@ children:
             children:
               - type: CheckBox
                 name: relEff
-                label: Relative Effect
+                label: Relative effect
                 children:
                   - type: LayoutBox
                     children:
