@@ -177,7 +177,9 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "miss",
                     "ciWidth",
                     "n_perm",
-                    "etl"),
+                    "etl",
+                    "setSeed",
+                    "seed"),
                 columns=list(
                     list(
                         `name`="var", 

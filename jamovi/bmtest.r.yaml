@@ -19,6 +19,8 @@ items:
         - ciWidth
         - n_perm
         - etl
+        - setSeed
+        - seed
 
       columns:
         - name: var
