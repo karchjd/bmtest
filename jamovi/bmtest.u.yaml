@@ -55,6 +55,12 @@ children:
                     enable: (randomPerm)
                   - type: CheckBox
                     name: setSeed
+                    enable: (randomPerm)
+                    children:
+                      - type: TextBox
+                        name: seed
+                        format: number
+                        enable: (setSeed)
               - type: CheckBox
                 name: fullPerm
           - type: Label
@@ -114,9 +120,5 @@ children:
                             suffix: '%'
                             format: number
                             enable: (ci)
-  - type: LayoutBox
-    margin: large
-    children:
-      - type: TextBox
-        name: seed
-        format: number
+
+
