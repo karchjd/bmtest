@@ -167,7 +167,8 @@ bmtestResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="bmtest",
                 refs=list(
-                    "bmtest"),
+                    "bmtest",
+                    "bmtest2"),
                 title="Brunner-Munzel Test",
                 rows="(vars)",
                 clearWith=list(

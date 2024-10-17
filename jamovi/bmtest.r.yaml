@@ -7,6 +7,7 @@ items:
     - name: bmtest
       refs:
         - bmtest
+        - bmtest2
       title: Brunner-Munzel Test
       description: a table containing the Brunner Munzel Test results
       type: Table

@@ -160,6 +160,9 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
                         check_n <- FALSE
                     } else if (type == "randomPerm") {
                         run_test <- function(dataTTest, HA, confInt) {
+                            if(self$options$setSeed){
+                                set.seed(self$options$seed)
+                            }
                             R.utils::withTimeout(nparcomp::npar.t.test(dep ~ group,
                                                                        data = dataTTest,
                                                                        alternative = HA,
