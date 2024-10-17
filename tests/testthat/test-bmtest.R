@@ -160,3 +160,38 @@ testthat::test_that('Formula Interface', {
     testthat::expect_equal(res_table, expected_table, tolerance = 0.0001, ignore_attr = TRUE)
 })
 
+testthat::test_that('random seed', {
+    df <- data.frame(
+        y1 = rep(c(0,1), 10),
+        y2 = rep(c(0,1), 10) + rep(c(0,1), each = 10),
+        g = rep(letters[1:2], each = 10),
+        check.names = FALSE
+    )
+
+    callf <- function(setSeed){
+        bmtest(
+            df,
+            vars = c("y1", "y2"),
+            group = "g",
+            relEff = FALSE,
+            ci = FALSE,
+            fullPerm = FALSE,
+            randomPerm = TRUE,
+            asym = FALSE,
+            hypothesis = "different",
+            setSeed = setSeed
+        )$bmtest$asDF$`p[randomPerm]`
+    }
+
+    pval1 <- callf(setSeed = FALSE)
+    pval2 <- callf(setSeed = FALSE)
+    testthat::expect(!identical(pval1,pval2), "p values are the same while not seed set")
+
+    pval1 <- callf(setSeed = TRUE)
+    pval2 <- callf(setSeed = TRUE)
+
+    testthat::expect_identical(pval1, pval2)
+
+})
+
+
