@@ -2,6 +2,7 @@
 # bmtest
 
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/karchjd/bmtest/graph/badge.svg)](https://app.codecov.io/gh/karchjd/bmtest)
+<a href="https://codecov.io/gh/karchjd/bmtest" >
+<img src="https://codecov.io/gh/karchjd/bmtest/branch/main/graph/badge.svg?token=OGCITRVCWX"/></a>
 <!-- badges: end -->
 
