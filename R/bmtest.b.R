@@ -315,5 +315,3 @@ bmtestClass <- if (requireNamespace("jmvcore", quietly = TRUE)) {
         )
     )
 }
-
-
