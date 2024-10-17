@@ -159,7 +159,7 @@ options:
           R: >
             `TRUE` or `FALSE` (default), Compute p values and confidence intervals using random permutations
     - name: n_perm
-      title: Number of Permutations
+      title: Number Permutations
       type: Number
       min: 40
       default: 10000

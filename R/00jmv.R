@@ -11,4 +11,14 @@
         `url`="https://doi.org/10.3390/psych5020026", 
         `doi`="10.3390/psych5020026", 
         `volume`=5, 
-        `pages`="127-141"))
+        `pages`="127-141"), 
+    `bmtest2`=list(
+        `type`="article", 
+        `author`="Karch, J.D.", 
+        `year`=2021, 
+        `title`="Psychologists Should Use Brunner-Munzel\u2019s Instead of Mann-Whitney\u2019s U Test as the Default Nonparametric Procedure", 
+        `publisher`="Advances in Methods and Practices in Psychological Science", 
+        `url`="https://doi.org/10.1177/2515245921999", 
+        `doi`="10.1177/2515245921999", 
+        `volume`=4, 
+        `issue`=2))

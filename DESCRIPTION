@@ -1,7 +1,7 @@
 Package: bmtest
 Type: Package
 Title: Brunner Munzel Test
-Version: 0.1.1
+Version: 0.1.2.9000
 Authors@R: person("Julian", "Karch", email = "j.d.karch@fsw.leidenuniv.nl",
   role = c("aut", "cre"))
 Description: Provides the Brunner-Munzel test in all three main variants (t-approximation, random permutations, and full permutations). Is primarily written for jamovi but is also useful as a standalone R package.
@@ -12,4 +12,4 @@ Imports: jmvcore (>= 2.3.19), R6, brunnermunzel (>= 1.4.1), nparcomp (>= 3.0), R
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

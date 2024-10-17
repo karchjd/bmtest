@@ -47,12 +47,10 @@ children:
                 children:
                   - type: TextBox
                     name: n_perm
-                    label: Number permutations
                     format: number
                     enable: (randomPerm)
                   - type: TextBox
                     name: etl
-                    label: Time limit (seconds)
                     format: number
                     enable: (randomPerm)
               - type: CheckBox
@@ -99,13 +97,11 @@ children:
             children:
               - type: CheckBox
                 name: relEff
-                label: Relative effect
                 children:
                   - type: LayoutBox
                     children:
                       - type: CheckBox
                         name: ci
-                        label: Confidence interval
                         enable: (relEff && (asym || randomPerm))
                         style: inline
                         verticalAlignment: center
