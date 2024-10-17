@@ -53,6 +53,8 @@ children:
                     name: etl
                     format: number
                     enable: (randomPerm)
+                  - type: CheckBox
+                    name: setSeed
               - type: CheckBox
                 name: fullPerm
           - type: Label
@@ -73,11 +75,6 @@ children:
                 optionName: hypothesis
                 optionPart: twoGreater
                 label: Group 1 < Group 2
-          - type: LayoutBox
-            margin: large
-            children:
-              - type: CheckBox
-                name: setSeed
           - type: Label
             label: Missing Values
             children:
