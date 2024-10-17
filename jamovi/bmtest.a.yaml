@@ -174,10 +174,19 @@ options:
       default: false
       description:
           ui: >
-            set random seed
+             whether to set a random seed
           R: >
-            `TRUE` or `FALSE` (default), set random seed
-
+            `TRUE` or `FALSE` (default), whether to set a random seed
+    - name: seed
+      title: Random Number Seed
+      type: Number
+      min: 0
+      default: 42
+      description:
+          ui: >
+            the random number seed to set
+          R: >
+            a integer (default 42), the random number seed to set
     - name: etl
       title: Time limit (seconds)
       type: Number

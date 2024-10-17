@@ -17,6 +17,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             randomPerm = FALSE,
             n_perm = 10000,
             setSeed = FALSE,
+            seed = 42,
             etl = 5,
             fullPerm = FALSE, ...) {
 
@@ -88,6 +89,11 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "setSeed",
                 setSeed,
                 default=FALSE)
+            private$..seed <- jmvcore::OptionNumber$new(
+                "seed",
+                seed,
+                min=0,
+                default=42)
             private$..etl <- jmvcore::OptionNumber$new(
                 "etl",
                 etl,
@@ -109,6 +115,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..randomPerm)
             self$.addOption(private$..n_perm)
             self$.addOption(private$..setSeed)
+            self$.addOption(private$..seed)
             self$.addOption(private$..etl)
             self$.addOption(private$..fullPerm)
         }),
@@ -124,6 +131,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         randomPerm = function() private$..randomPerm$value,
         n_perm = function() private$..n_perm$value,
         setSeed = function() private$..setSeed$value,
+        seed = function() private$..seed$value,
         etl = function() private$..etl$value,
         fullPerm = function() private$..fullPerm$value),
     private = list(
@@ -138,6 +146,7 @@ bmtestOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..randomPerm = NA,
         ..n_perm = NA,
         ..setSeed = NA,
+        ..seed = NA,
         ..etl = NA,
         ..fullPerm = NA)
 )
@@ -337,7 +346,9 @@ bmtestBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param randomPerm \code{TRUE} or \code{FALSE} (default), Compute p values
 #'   and confidence intervals using random permutations
 #' @param n_perm a integer (default 10000), the number of random permutations
-#' @param setSeed \code{TRUE} or \code{FALSE} (default), set random seed
+#' @param setSeed \code{TRUE} or \code{FALSE} (default), whether to set a
+#'   random seed
+#' @param seed a integer (default 42), the random number seed to set
 #' @param etl a integer (default 5), limit on elapsed cpu time in seconds
 #' @param fullPerm \code{TRUE} or \code{FALSE} (default), Compute p values and
 #'   confidence intervals using ALL permutations
@@ -367,6 +378,7 @@ bmtest <- function(
     randomPerm = FALSE,
     n_perm = 10000,
     setSeed = FALSE,
+    seed = 42,
     etl = 5,
     fullPerm = FALSE,
     formula) {
@@ -411,6 +423,7 @@ bmtest <- function(
         randomPerm = randomPerm,
         n_perm = n_perm,
         setSeed = setSeed,
+        seed = seed,
         etl = etl,
         fullPerm = fullPerm)
 

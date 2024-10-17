@@ -114,3 +114,9 @@ children:
                             suffix: '%'
                             format: number
                             enable: (ci)
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: seed
+        format: number
