@@ -39,11 +39,11 @@ children:
               - type: CheckBox
                 name: asym
                 events:
-                  change: './bmtest.events::onChange_asym'
+                  change: ./bmtest.events::onChange_asym
               - type: CheckBox
                 name: randomPerm
                 events:
-                  change: './bmtest.events::onChange_randomPerm'
+                  change: ./bmtest.events::onChange_randomPerm
                 children:
                   - type: TextBox
                     name: n_perm
@@ -73,6 +73,11 @@ children:
                 optionName: hypothesis
                 optionPart: twoGreater
                 label: Group 1 < Group 2
+          - type: LayoutBox
+            margin: large
+            children:
+              - type: CheckBox
+                name: setSeed
           - type: Label
             label: Missing Values
             children:

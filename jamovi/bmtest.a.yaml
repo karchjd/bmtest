@@ -168,6 +168,16 @@ options:
             the number of random permutations
           R: >
             a integer (default 10000), the number of random permutations
+    - name: setSeed
+      title: Set Random Seed
+      type: Bool
+      default: false
+      description:
+          ui: >
+            set random seed
+          R: >
+            `TRUE` or `FALSE` (default), set random seed
+
     - name: etl
       title: Time limit (seconds)
       type: Number
